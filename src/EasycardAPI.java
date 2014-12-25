@@ -33,7 +33,7 @@ public class EasycardAPI {
 		{
 			logger.error(e.getMessage());			
 		}
-	
+
 		/*
 		Properties  properties = new Properties();
 		 String path=EasycardAPI.class.getResource("/").getPath() +  "EasycardAPI.properties";

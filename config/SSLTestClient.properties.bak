@@ -1,0 +1,5 @@
+ServerIP=211.78.134.165
+ServerPort=7000
+FilePath=D:\\sendData.txt
+KeyPath=D:\\CMAS-FTP51T.jks
+KeyPass=Cmas@999
