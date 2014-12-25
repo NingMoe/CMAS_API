@@ -48,8 +48,8 @@ class APDUCmd{
 		CMDDATA=new byte[Lc];
 		CMDDATA=data;
 		Le=le;
-}
-public APDUCmd(byte cla,byte ins,byte p1,byte p2,byte le){
+	}
+	public APDUCmd(byte cla,byte ins,byte p1,byte p2,byte le){
 			CLA=cla;
 			INS=ins;
 			P1=p1;
@@ -58,45 +58,45 @@ public APDUCmd(byte cla,byte ins,byte p1,byte p2,byte le){
 		    Lc=0;
 	}
  
-public byte checksum(int length,byte  data[])
-{
-byte chk= 0x00;
-int i= 0x00;
- 
-for(i=0;i<length;i++)
-chk^=data[i];
-return chk;
-}
+	public byte checksum(int length,byte  data[])
+	{
+	byte chk= 0x00;
+	int i= 0x00;
+	 
+	for(i=0;i<length;i++)
+	chk^=data[i];
+	return chk;
+	}
 
-public byte [] getCmdBytes(){
-		byte []buf=new byte[256];
-		int inCnt=0;
-		buf[0]=0x00;buf[1]=0x00;
-		inCnt=3;
-		buf[inCnt++]=CLA;buf[inCnt++]=INS;
+	public byte [] getCmdBytes(){
+			byte []buf=new byte[256];
+			int inCnt=0;
+			buf[0]=0x00;buf[1]=0x00;
+			inCnt=3;
+			buf[inCnt++]=CLA;buf[inCnt++]=INS;
+			
+			buf[inCnt++]=P1;buf[inCnt++]=P2;
 		
-		buf[inCnt++]=P1;buf[inCnt++]=P2;
-	
-		if(Lc!=0)
-		{	
-			buf[inCnt++]=Lc;
-		
-		}
-		
-		if(Lc!=0){
-			System.arraycopy(CMDDATA,0,buf,inCnt,Lc);
-			inCnt+=Lc;
-		}
-		if(Le!=0){
-		
-			buf[inCnt++]=Le;
-		
-		}
-		buf[2]=(byte) (inCnt-3);
-		buf[inCnt++] = checksum(inCnt,buf);//EDC
-		System.out.print( DatatypeConverter.printHexBinary(buf));
-		return buf;
-}
+			if(Lc!=0)
+			{	
+				buf[inCnt++]=Lc;
+			
+			}
+			
+			if(Lc!=0){
+				System.arraycopy(CMDDATA,0,buf,inCnt,Lc);
+				inCnt+=Lc;
+			}
+			if(Le!=0){
+			
+				buf[inCnt++]=Le;
+			
+			}
+			buf[2]=(byte) (inCnt-3);
+			buf[inCnt++] = checksum(inCnt,buf);//EDC
+			System.out.print( DatatypeConverter.printHexBinary(buf));
+			return buf;
+	}
 
 //////////////////////////////////////////////////////////////
 	public boolean SetRespData(byte [] respdata){
@@ -115,6 +115,7 @@ public byte [] getCmdBytes(){
 			
 		
 	}
+	
 }
 
  class CMD_Reset extends APDUCmd
@@ -439,16 +440,16 @@ public byte [] getCmdBytes(){
        System.arraycopy(inTMTxnDateTime.getBytes(),0,CMDDATA,offset,14);
        offset+=14;
        
-      String bTMSerialNumber =String.format("%06d",Integer.parseInt(inTMSerialNumber )); //²×ºÝ¾÷(TM)¥æ©ö§Ç¸¹  
+      String bTMSerialNumber =String.format("%06d",Integer.parseInt(inTMSerialNumber )); //ï¿½×ºÝ¾ï¿½(TM)ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½  
   
        System.arraycopy(  bTMSerialNumber.getBytes(),0,CMDDATA,offset,6);
        offset+=6;
        
-        inTMAgentNumber =String.format("%04d",Integer.parseInt(inTMAgentNumber)); //¦¬»È­û¥N¸¹
+        inTMAgentNumber =String.format("%04d",Integer.parseInt(inTMAgentNumber)); //ï¿½ï¿½ï¿½È­ï¿½ï¿½Nï¿½ï¿½
        System.arraycopy(inTMAgentNumber.getBytes(),0,CMDDATA,offset,4);
        offset+=4;
        
-       SimpleDateFormat fdate =   new SimpleDateFormat ("");//²×ºÝ¾÷¥æ©ö®É¶¡
+       SimpleDateFormat fdate =   new SimpleDateFormat ("");//ï¿½×ºÝ¾ï¿½ï¿½ï¿½ï¿½ï¿½É¶ï¿½
        int UnixTime = (int) (Transtime.getTime()/1000);
        inTxnDateTime=Integer.toHexString(UnixTime);
        System.arraycopy(inTxnDateTime.getBytes(),0,CMDDATA,offset,4);
@@ -458,10 +459,10 @@ public byte [] getCmdBytes(){
       
        
       
-       byte[] bCPULocationIDbyte =String.format("%02d",Integer.parseInt(  inCPULocationID)).getBytes();//¤G¥N¤À¤½¥q¥N¸¹ 
+       byte[] bCPULocationIDbyte =String.format("%02d",Integer.parseInt(  inCPULocationID)).getBytes();//ï¿½Gï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½qï¿½Nï¿½ï¿½ 
        
      //  byte[] chars =  sys.GetNodeValue("MERCHANT","NewLocationID").getBytes();
-       inLocationID =Integer.toHexString((int) bCPULocationIDbyte[0]);//¤@¥N¤À¤½¥q¥N¸¹
+       inLocationID =Integer.toHexString((int) bCPULocationIDbyte[0]);//ï¿½@ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½qï¿½Nï¿½ï¿½
        CMDDATA[offset++]=(byte) inLocationID.charAt(0);
      
        System.arraycopy(bCPULocationIDbyte,0,CMDDATA,offset,2);
@@ -472,7 +473,7 @@ public byte [] getCmdBytes(){
        CMDDATA[offset++]=0x00;// old spid
       
 
-    //   inCPUSPID = sys.GetNodeValue("MERCHANT","MERCHANTID"); //¯S©±¥N¸¹
+    //   inCPUSPID = sys.GetNodeValue("MERCHANT","MERCHANTID"); //ï¿½Sï¿½ï¿½ï¿½Nï¿½ï¿½
        
      
      // =String.format("%03x",Integer.parseInt(inCPUSPID)).getBytes();
@@ -480,7 +481,7 @@ public byte [] getCmdBytes(){
 
        System.arraycopy(bCPUSPID,0,CMDDATA,offset,3);
        offset+=3;
-       offset+=1+2+2;//¥¼¨Ï¥Î¤§Äæ¦ì 
+       offset+=1+2+2;//ï¿½ï¿½ï¿½Ï¥Î¤ï¿½ï¿½ï¿½ï¿½ 
    //    int i = Integer.parseInt(sys.GetNodeValue("DEVICE","SAMSLOT"));
        CMDDATA[offset]=0x11;//inSAMSlot[0]; //SAM SLOT
         offset+=11;
@@ -506,37 +507,56 @@ public byte [] getCmdBytes(){
 }
 
 
-public class READER {
-	public test value;
+public class V2Command{
+	
 	
 	CMD_Reset  Reset;
     static String  PortName;
-    static SerialPort serialPort; 
-  	static String       Merchant_ID;//¯S©±¥N¸¹
- 	static String		Merchant_STCODE;//¤À©±¥N¸¹
- 	static  String		Merchant_LocationID;//¤À¤½¥q¥N½X
- 	static   String		TM_ID;//©±¸¹
- 	static  String  		TM_SerialNo;//
- 	static   String		TM_AgentNumber;//©±­û¥N¸¹
+    
+    private SerialPort serialPort;    
+  	private String merchantId;//ç‰¹åº—ä»£è™Ÿ
+ 	private String merchantSTCode;
+ 	private String merchantLocationId;
+ 	private String TmId;
+ 	private String TmSerialNo;
+ 	private String TmAgentNo;
  	Date Transtime;
+ 	
+ 	
+ 	public class CReset{
+ 		public byte[] gotTag5566()
+ 		{
+ 			byte data[]={0x02,0x03};
+ 			
+ 			return data;
+ 		}
+ 		
+ 	}
+ 	
+ 	public CReset ResetCmd;
+ 	
+ 	
      String GetPortName(){
     	 return PortName;
      }
      void SetPortName(String portname ){
     	  PortName=portname;
      }
+     
+     /*
      public void SetReaderparameter(String stcode,String marchant_location,String merchant_id,String tmid,String tm_agentnumber,String tm_serialno,Date DateTime)
      {
-    	Merchant_ID=merchant_id;//¯S©±¥N¸¹
-        Merchant_STCODE=new String(stcode);//¤À©±¥N¸¹
-		Merchant_LocationID=new String(marchant_location);//¤À¤½¥q¥N½X
-        TM_ID=new String(tmid);//©±¸¹
+    	Merchant_ID=merchant_id;//ï¿½Sï¿½ï¿½ï¿½Nï¿½ï¿½
+        Merchant_STCODE=new String(stcode);//ï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½
+		Merchant_LocationID=new String(marchant_location);//ï¿½ï¿½ï¿½ï¿½ï¿½qï¿½Nï¿½X
+        TM_ID=new String(tmid);//ï¿½ï¿½ï¿½ï¿½
   		TM_SerialNo=new String(tm_serialno);//
-        TM_AgentNumber=new String(tm_agentnumber);//©±­û¥N¸¹
+        TM_AgentNumber=new String(tm_agentnumber);//ï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½
         Transtime=DateTime;
         return ;
      }
-     public  READER(String PortName) {
+     */
+     public  V2Command(String PortName) {
     	 serialPort =new SerialPort(PortName);
     	
 	 }
@@ -589,7 +609,7 @@ public class READER {
 	
     public void Reset(){
     
-    	Reset=new CMD_Reset( Merchant_STCODE, Merchant_LocationID, Merchant_ID, TM_ID, TM_AgentNumber,TM_SerialNo,Transtime);
+    	//Reset=new CMD_Reset( Merchant_STCODE, Merchant_LocationID, Merchant_ID, TM_ID, TM_AgentNumber,TM_SerialNo,Transtime);
     
     
     	if(SendandReceiveAPDU()==0){

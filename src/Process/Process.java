@@ -22,12 +22,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import CMAS.SSLClient;
-import Reader.READER;
+import Reader.V2Command;;
 
 
 public class Process {
 
-	 READER Dongle;
+	V2Command Dongle;
 	 Properties  Process_properties;
 	 Properties Config_properties;
 	 Date TransDateTime ;
@@ -50,7 +50,7 @@ public class Process {
 	public void SignOn()
 	{
 		 String ReaderPort=    Process_properties.getProperty("ReaderPort");
-		 Dongle =new READER(ReaderPort );
+		 Dongle =new V2Command(ReaderPort );
 		 
 		 String Merchant_STCODE= Process_properties.getProperty("Merchant_STCODE");
 		 String Merchant_LocationID= Process_properties.getProperty("Merchant_LocationID");
@@ -62,8 +62,8 @@ public class Process {
 		 TransDateTime = new Date( );
 		
 	    
-		 
-	     Dongle.SetReaderparameter( Merchant_STCODE,Merchant_LocationID,Merchant_ID,TM_ID,TM_AgentNumber,TM_SerialNo,TransDateTime);
+		 Dongle.ResetCmd.gotTag5566();
+	     //Dongle.SetReaderparameter( Merchant_STCODE,Merchant_LocationID,Merchant_ID,TM_ID,TM_AgentNumber,TM_SerialNo,TransDateTime);
 		 Dongle.Reset();
 		 
 	}

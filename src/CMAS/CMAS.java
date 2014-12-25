@@ -132,7 +132,7 @@ public class CMAS {
 				Element T1200 = doc.createElement("T1200");
 				SimpleDateFormat ftime =   new SimpleDateFormat ("hhmmss");
 			    String  strTxTime=ftime.format(TransDateTime);
-			   //t1201»Pt1200¦P­È
+			   //t1201ï¿½Pt1200ï¿½Pï¿½ï¿½
 			    Element T1201 = doc.createElement("T1201");
 		 		T1201.appendChild(doc.createTextNode( Process_properties.getProperty(strTxTime).toString()));
 		 		TransElement.appendChild(T1201);
@@ -141,7 +141,7 @@ public class CMAS {
 		 		Element T1300 = doc.createElement("T1300");
 				 ftime =   new SimpleDateFormat ("yyyyMMdd");
 			    String  strTxDate=ftime.format(TransDateTime);
-			   //t1301»Pt1300¦P­È
+			   //t1301ï¿½Pt1300ï¿½Pï¿½ï¿½
 			    Element T1301 = doc.createElement("T1301");
 		 		T1301.appendChild(doc.createTextNode( strTxDate));
 		 		TransElement.appendChild(T1301);
