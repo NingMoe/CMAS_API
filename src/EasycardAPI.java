@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import CMAS.CMAS;
+import Reader.EZReader;
 
 
 import org.apache.log4j.*;
@@ -27,6 +28,15 @@ public class EasycardAPI {
 			logp.load(CMAS.class.getClassLoader().getResourceAsStream("log4j.properties"));
 			PropertyConfigurator.configure(logp);
 			logger.info("********** App Start **********");
+			
+			//reset
+			EZReader reader = EZReader.getInstance();
+			reader.setPortName("COM6");
+			reader.setMerchantId("10001");
+			reader.setMerchantSTCode("100011");
+			reader.exeReset();
+			
+			
 			
 						
 		}catch(IOException e)

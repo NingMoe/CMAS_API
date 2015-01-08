@@ -1,5 +1,11 @@
 package Utilities;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import com.sun.java.swing.plaf.windows.WindowsTreeUI.CollapsedIcon;
+import com.sun.tools.xjc.xjb.XBBind.Collection;
+
 
 public class DataFormat {
    public DataFormat(){
@@ -139,4 +145,49 @@ public class DataFormat {
 	}  
 	return binary.toString();  
 	}  
+	
+	/*
+	 * 2014.01.05 added by kobe
+     * Method for String padding lefr or right specific char
+     * ex: stringPaddingChar("111222", true, 0x30, 10);// padding zero to left, total len 10
+     * output : 0000111222
+     */
+	public static byte[] stringPaddingChar(String input, boolean paddingLeft, byte paddingChar, int len)
+	{
+		byte result[] = new byte[len];
+		Arrays.fill(result, paddingChar);
+		
+		
+		if(paddingLeft)
+		{
+			System.arraycopy(input.getBytes(), 0, result, (len-input.length()<0)?0:len-input.length(), (len-input.length()<0)?len: input.length());
+		}
+		else//padding Right
+		{
+			System.arraycopy(input.getBytes(), 0, result, 0, (len-input.length()<0)?len:input.length());
+		}
+		return result;
+	}
+	
+	
+	public static byte[] hexStringToByteArray(String s) {
+	    int len = s.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
+	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+	                             + Character.digit(s.charAt(i+1), 16));
+	    }
+	    return data;
+	}
+	
+	public static String hex2StringLog(byte[] data)
+	{
+		StringBuilder sb = new StringBuilder();
+		   
+		for(byte b: data)
+		      sb.append("("+String.format("%02x", b & 0xff)+")");
+		   
+		return sb.toString();	
+	}
+	
 }
