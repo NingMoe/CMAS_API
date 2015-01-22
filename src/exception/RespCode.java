@@ -9,7 +9,8 @@ public enum RespCode{
 	SUCCESS(0, "Success"),
 	ERROR(-1, "Something Error"),
 	ESCAPE(-2, "Escape"),	
-	LRC_NOT_MATCH(-3, "Reader'LRC maybe does not match with API"),	
+	LRC_NOT_MATCH(-3, "Reader'LRC maybe does not match with API"),
+	COMPORT_OPEN_FAIL(-4, "Reader Open Comport fail"),
 	UNKNOWN_ERROR_CODE(-9999,"Unknowen ErrCode");
 	
 
