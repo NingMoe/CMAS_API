@@ -1,5 +1,6 @@
 package Reader;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Time;
 import java.util.Properties;
@@ -12,9 +13,10 @@ import jssc.SerialPortTimeoutException;
 import org.apache.log4j.Logger;
 
 
+
 import Utilities.DataFormat;
 
-import exception.RespCode;
+
 import org.apache.commons.lang.ArrayUtils;
 
 public class RecvSender {
@@ -31,16 +33,17 @@ public class RecvSender {
 	
 	private int init()
 	{
-		// TODO Auto-generated method stub		
+	
 		logger.info("Start");
 		int result = RespCode.SUCCESS.getId();
 		try{
 			
 			Properties  apiConfig = new Properties();
-			apiConfig.load(RecvSender.class.getClassLoader().getResourceAsStream("EasycardAPI.properties")); 
-							
+			//apiConfig.load(RecvSender.class.getClassLoader().getResourceAsStream("EasycardAPI.properties")); 
+			apiConfig.load(new FileInputStream(this.getClass().getResource("/").getPath() +Config.PATH.EasycardAPI_Properties));							
 			if((portName = apiConfig.getProperty("ReaderPort"))==null)
 				result = RespCode.ERROR.getId();
+			portName=portName.toUpperCase();
 			logger.debug("Reader ComportName: " + portName);
 			logger.info("End");
 			
@@ -167,8 +170,13 @@ public class RecvSender {
 	
 		try {
 			return mPort.readBytes(byteCount, timeOut);
-		} catch (SerialPortException | SerialPortTimeoutException e) {
+		} catch (SerialPortException e) {
 			logger.error("read SerialPortException:"+e.getMessage());
+			e.printStackTrace();
+			
+		} catch (SerialPortTimeoutException e)
+		{
+			logger.error("read SerialPortTimeoutException:"+e.getMessage());
 			e.printStackTrace();
 			
 		}

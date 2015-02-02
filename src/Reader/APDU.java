@@ -31,6 +31,7 @@ public abstract class APDU {
 	public abstract byte[] GetRequest();
 	public abstract boolean SetRequestData(byte[] bytes);
 	public abstract int GetReqRespLength();
+	protected abstract void debugResponseData();
 	
 	protected static final int scRespMinLength = 6;
 	protected static final int scRespDataOffset = 3;
@@ -279,4 +280,6 @@ public abstract class APDU {
 		
 		return "¥¼ª¾ªº¿ù»~";
 	}
+	
+	
 }

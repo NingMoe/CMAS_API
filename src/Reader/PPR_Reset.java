@@ -920,7 +920,18 @@ public class PPR_Reset extends APDU {
 			return false;
 		}
 	}
-	
+	//add by bruce
+	public byte bGetResp_CheckEVFlagForMifareOnly() {
+		if (mRespond == null) {
+			return 0x00;
+		}
+		byte b = (byte) (mRespond[scRespData_SignOnParams1] & 0x40);
+		if (b == 0) {
+			return 0x01;
+		} else {
+			return 0x00;
+		}
+	}
 	/* PPR_SignOn參數設定, 適用於有SignOn之設備, Merchant Limit Use For Micro Payment: Bit 7, 小額消費通路限制使用旗標 */
 	public boolean GetResp_MerchantLimitUseForMicroPayment() {
 		if (mRespond == null) {
@@ -933,7 +944,18 @@ public class PPR_Reset extends APDU {
 			return false; // 不限制使用
 		}
 	}
-	
+	//add by bruce
+	public byte bGetResp_MerchantLimitUseForMicroPayment() {
+		if (mRespond == null) {
+			return 0x00;
+		}
+		byte b = (byte) (mRespond[scRespData_SignOnParams1] & 0x80);
+		if (b == 0) {
+			return 0x00; // 限制使用
+		} else { 
+			return 0x01; // 不限制使用
+		}
+	}
 	/* 
 	 * PPR_SignOn參數設定, 1 byte, Reader (適用於有SignOn之設備)
 	 * One Day Quota Flag For Micro Payment: Bit 0~1, 小額消費日限額旗標
@@ -992,7 +1014,18 @@ public class PPR_Reset extends APDU {
 			return true; // 限制扣值交易合法驗證金額
 		}
 	}
-	
+	//add by bruce
+	public byte bGetResp_CheckDebitFlag() {
+		if (mRespond == null) {
+			return 0x00;
+		}  
+		byte b = (byte) (mRespond[scRespData_SignOnParams2] & 0x08);
+		if (b == 0) {
+			return 0x00; // 不限制扣值交易合法驗證金額
+		} else {
+			return 0x01; // 限制扣值交易合法驗證金額
+		}
+	}
 	/* PPR_SignOn參數設定, 適用於有SignOn之設備, Mifare Check Enable Flag: Bit 4, 二代卡Level 1 */
 	public boolean GetResp_MifareCheckEnableFlag() {
 		if (mRespond == null) {
@@ -1066,7 +1099,18 @@ public class PPR_Reset extends APDU {
 			return true; // 檢查額度
 		}
 	}
-	
+	//add by bruce
+	public byte bGetResp_AddQuotaFlag() {
+		if (mRespond == null) {
+			return 0x00;
+		}
+		
+		if (mRespond[scRespData_AddQuotaFlag] == 0) {
+			return 0x00; // 不檢查額度
+		} else {
+			return 0x01; // 檢查額度
+		}
+	}
 	/* Add Quota, 3 bytes, Reader (適用於舊的額度控管), 加值額度, Unsigned and LSB First */
 	private static final int scRespData_AddQuota = scRespData_AddQuotaFlag + scRespData_AddQuotaFlag_Len;
 	private static final int scRespData_AddQuota_Len = 3;
@@ -1120,7 +1164,15 @@ public class PPR_Reset extends APDU {
 		}
 		return Util.sByteToInt(mRespond, scRespData_LastTXNDateTime, true);
 	}
+	//add by bruce
+	public byte[] bGetResp_LastTXNDateTime() {
+		if (mRespond == null) {
+			return null;
+		}
+		return Arrays.copyOfRange(mRespond, scRespData_LastTXNDateTime, 
+				scRespData_LastTXNDateTime +scRespData_LastTXNDateTime_Len);
 	
+	}
 	/* Previous New Device ID, 6 bytes, Reader, 新設備編號, 
 	 * 新SAM Card SignOn補confirm之用, 含成功或失敗, 
 	 * Unsigned and LSB First, P2=0x01時補0x00 
@@ -1180,7 +1232,18 @@ public class PPR_Reset extends APDU {
 			return true; // 額度有變更
 		}
 	}
-	
+	//add by bruce
+	public byte bGetResp_PreviousCreditBalanceChangeFlag() {
+		if (mRespond == null) {
+			return 0x00;
+		}
+		
+		if (mRespond[scRespData_PreviousCreditBalanceChangeFlag] == 0) {
+			return 0x00; // 未變更
+		} else {
+			return 0x01; // 額度有變更
+		}
+	}
 	/* Previous Confirm Code, 2 bytes, Reader, Status Code1 + Status Code2, 
 	 * 新SAM Card SignOn補confirm之用, 含成功或失敗, 
 	 * P2=0x01時補0x00 
@@ -1241,6 +1304,12 @@ public class PPR_Reset extends APDU {
 		Resp_SW2 = mRespond[scRespDataOffset + dataLength + 1 - 2];
 		
 		return true;
+	}
+
+	@Override
+	protected void debugResponseData() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// for debug only...

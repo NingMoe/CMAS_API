@@ -98,12 +98,12 @@ public class XMLReader {
 	 public void LoadXMLFile(String filename) throws ParserConfigurationException
 	 {
 		 
-		 XMLFileName=filename;	
+		  XMLFileName=filename;	
 		  fXmlFile = new File( XMLFileName);
 		  dbFactory = DocumentBuilderFactory.newInstance();
 		  dBuilder = dbFactory.newDocumentBuilder();
 		  
- 		  try {
+ 		try {
 			doc = dBuilder.parse(fXmlFile);
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block

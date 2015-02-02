@@ -1,16 +1,87 @@
 package Utilities;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-//import com.sun.java.swing.plaf.windows.WindowsTreeUI.CollapsedIcon;
-import com.sun.tools.xjc.xjb.XBBind.Collection;
-
 
 public class DataFormat {
    public DataFormat(){
 	  
   }
+   
+public static byte booleam2byte(Boolean vIn)
+{
+	byte vOut = (byte)(vIn?1:0);
+	return vOut;
+}
+   public static void putInt(int value, byte[] array, int offset) {
+     array[offset]   = (byte)(0xff & (value >> 24));
+     array[offset+1] = (byte)(0xff & (value >> 16));
+     array[offset+2] = (byte)(0xff & (value >> 8));
+     array[offset+3] = (byte)(0xff & value);
+   }
+
+   public static int getInt(byte[] array, int offset) {
+     return
+       ((array[offset]   & 0xff) << 24) |
+       ((array[offset+1] & 0xff) << 16) |
+       ((array[offset+2] & 0xff) << 8) |
+        (array[offset+3] & 0xff);
+   }
+
+   public static void putLong(long value, byte[] array, int offset) {
+     array[offset]   = (byte)(0xff & (value >> 56));
+     array[offset+1] = (byte)(0xff & (value >> 48));
+     array[offset+2] = (byte)(0xff & (value >> 40));
+     array[offset+3] = (byte)(0xff & (value >> 32));
+     array[offset+4] = (byte)(0xff & (value >> 24));
+     array[offset+5] = (byte)(0xff & (value >> 16));
+     array[offset+6] = (byte)(0xff & (value >> 8));
+     array[offset+7] = (byte)(0xff & value);
+   }
+
+   public static long getLong7Byte(byte[] array, int offset) {
+     return
+    
+       ((long)(array[offset+0] & 0xff) << 48) |
+       ((long)(array[offset+1] & 0xff) << 40) |
+       ((long)(array[offset+2] & 0xff) << 32) |
+       ((long)(array[offset+3] & 0xff) << 24) |
+       ((long)(array[offset+4] & 0xff) << 16) |
+       ((long)(array[offset+5] & 0xff) << 8) |
+       ((long)(array[offset+6] & 0xff));
+   }
+   public static long getLong(byte[] array, int offset) {
+     return
+       ((long)(array[offset] &0xff)		  <<56)	|  
+       ((long)(array[offset+0] & 0xff) << 48) |
+       ((long)(array[offset+1] & 0xff) << 40) |
+       ((long)(array[offset+2] & 0xff) << 32) |
+       ((long)(array[offset+3] & 0xff) << 24) |
+       ((long)(array[offset+4] & 0xff) << 16) |
+       ((long)(array[offset+5] & 0xff) << 8) |
+       ((long)(array[offset+6] & 0xff));
+   }
+   //Byte[] to byte[]
+   byte[] BytetoPrimitives(Byte[] oBytes)
+   {
+
+   byte[] bytes = new byte[oBytes.length];
+   for(int i = 0; i < oBytes.length; i++){
+       bytes[i] = oBytes[i];
+   }
+   return bytes;
+
+   }
+
+
+
+   //byte[] to Byte[]
+   Byte[] bytetoObjects(byte[] bytesPrim) {
+
+   Byte[] bytes = new Byte[bytesPrim.length];
+   int i = 0;
+   for (byte b : bytesPrim) bytes[i++] = b; //Autoboxing
+   return bytes;
+
+}
 	public  static String convertToHexString(byte[] data) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < data.length; i++) {
@@ -128,7 +199,18 @@ public class DataFormat {
 	ret[3] = (byte) ((a >> 24) & 0xFF);
 	return ret;
 	}
-	
+	/*
+	 * 
+	 * 
+	 */
+	public static String AsciiToString(byte[] data) {
+	    StringBuilder sb = new StringBuilder(data.length);
+	    for (int i = 0; i < data.length; ++ i) {
+	        if (data[i] < 0) throw new IllegalArgumentException();
+	        sb.append((char) data[i]);
+	    }
+	    return sb.toString();
+	}
 	public static String AsciiToBinary(String asciiString){  
 	
 	byte[] bytes = asciiString.getBytes();  
@@ -146,40 +228,18 @@ public class DataFormat {
 	return binary.toString();  
 	}  
 	
-	/*
-	 * 2014.01.05 added by kobe
-     * Method for String padding lefr or right specific char
-     * ex: stringPaddingChar("111222", true, 0x30, 10);// padding zero to left, total len 10
-     * output : 0000111222
-     */
-	public static byte[] stringPaddingChar(String input, boolean paddingLeft, byte paddingChar, int len)
-	{
-		byte result[] = new byte[len];
-		Arrays.fill(result, paddingChar);
-		
-		
-		if(paddingLeft)
-		{
-			System.arraycopy(input.getBytes(), 0, result, (len-input.length()<0)?0:len-input.length(), (len-input.length()<0)?len: input.length());
-		}
-		else//padding Right
-		{
-			System.arraycopy(input.getBytes(), 0, result, 0, (len-input.length()<0)?len:input.length());
-		}
-		return result;
-	}
-	
-	
-	public static byte[] hexStringToByteArray(String s) {
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
+	public static String bytesToHex(byte[] bytes) {
+	    final char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+	    char[] hexChars = new char[bytes.length * 2];
+	    int v;
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
 	    }
-	    return data;
+	    return new String(hexChars);
 	}
-	
+
 	public static String hex2StringLog(byte[] data)
 	{
 		StringBuilder sb = new StringBuilder();

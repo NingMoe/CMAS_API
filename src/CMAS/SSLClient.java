@@ -1,13 +1,13 @@
 package CMAS;
 
-/**
-*
-* @author hyt
-*/
+
+
 import java.security.KeyStore;
 import java.io.FileInputStream;
 import java.util.Properties;
+
 import javax.net.ssl.*;
+
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.FileReader;
@@ -20,29 +20,41 @@ public class SSLClient {
    private static String process = "SSLClient";
    private static String serverIP;
    private static int serverPort = 0;
-   private static String filePath;
+  
    private static String keyPath;
-   private static String keyPass;
-   
-   public static void main(String args[]) {
-       try {
-           Properties properties = new Properties();
-           properties.load(new FileInputStream(SSLClient.class.getResource("/").getPath() + process + ".properties"));
-           serverIP =properties.getProperty("ServerIP");
-           serverPort =Integer.parseInt(properties.getProperty("ServerPort"));
-           filePath = properties.getProperty("FilePath");
-           keyPath = properties.getProperty("KeyPath");
-           keyPass = properties.getProperty("KeyPass");
+   private static String keyPass="Cmas@999";
+   public void SetServerIP(String ip,String port)
+   {
+	   	serverIP=ip;
 
-           String content = "";
+	   	int iport=Integer.parseInt(port);
+	   	if(iport<=65535&& iport >0)
+	   		serverPort=iport;
+	   	else
+	   		serverPort=7000;
+   }
+   public  byte[] SendReceive(String Reqdata,String IP,String Port) {
+       try {
+    	   SetServerIP(IP,Port);
+    	   byte[]     Receivebuffer= new byte[65536];
+           
+         //  properties.load(new FileInputStream(SSLClient.class.getResource("/").getPath() + process + ".properties"));
+         
+ 
+   //        SendfilePath = properties.getProperty("SendFilePath");
+  //         ReceivefilePath = properties.getProperty("ReceiveFilePath");
+           	   keyPath =this.getClass().getResource("/").getPath() + Config.PATH.Config+"CMAS-FTP51T.jks";
+  //         keyPass = properties.getProperty("KeyPass");
+
+      /*     String content = "";
 
            FileReader fr = new FileReader(filePath);
-           BufferedReader br = new BufferedReader(fr);
+           BufferedReader br = new BufferedReader( (fr);
            String line = "";
            while ((line = br.readLine()) != null)
            {
                content += line;
-           }
+           }*/
 
            KeyStore keyStore = KeyStore.getInstance("JKS");
            keyStore.load(new FileInputStream(keyPath), keyPass.toCharArray());
@@ -55,16 +67,17 @@ public class SSLClient {
            SSLSocketFactory ssls = sslContext.getSocketFactory();
            SSLSocket socket =  (SSLSocket)ssls.createSocket(serverIP, serverPort);
            OutputStream os = socket.getOutputStream();
-           os.write(content.getBytes("UTF-8"));
+           os.write(Reqdata.getBytes("UTF-8"));
            os.flush();
 
            InputStream is = socket.getInputStream();
-           byte[] b = new byte[65536];
-           is.read(b);
-           System.out.println(new String(b, "UTF-8"));
-
+      
+           is.read(Receivebuffer);
+           System.out.println(new String(Receivebuffer, "UTF-8"));
+           return Receivebuffer;
       } catch(Exception e) {
           e.printStackTrace();
+          return null;
       }
    }
 }

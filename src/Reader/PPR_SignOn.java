@@ -3,7 +3,9 @@ package Reader;
 import java.util.Arrays;
 
 
+
 import Utilities.DataFormat;
+import Utilities.Util;
 
 
 public class PPR_SignOn extends APDU {
@@ -22,14 +24,16 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 	private byte[] mRequest = new byte[scReqLength];
 	private byte[] mRespond = null;
 	
+	/*
 	public static PPR_SignOn sGetInstance() {
 		if (sThis == null) {
 			sThis = new PPR_SignOn();
 		}
 		return sThis;
 	}
-	
-	private PPR_SignOn() {
+	*/
+	//private PPR_SignOn() {
+	public PPR_SignOn() {
 		Req_NAD = 0;
 		Req_PCB = 0; 
 		Req_LEN = (byte) scReqInfoLength;
@@ -65,7 +69,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
  		
  		//byte[] b = Util.sGetBinaryfromString(htac);
  		
- 		byte[] b = DataFormat.hexStringToByteArray(htac);
+ 	//	byte[] b = DataFormat.hexStringToByteArray(htac);
+ 		byte[] b= Util.sGetBinaryfromString(htac);
  		if (b == null) {
  			return false;
  		}
@@ -84,7 +89,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		}
 		
 		//byte[] b = Util.sGetBinaryfromString(haToken);
-		byte[] b = DataFormat.hexStringToByteArray(haToken);
+	//	byte[] b = DataFormat.hexStringToByteArray(haToken);
+		byte[] b=  Util.sGetBinaryfromString(haToken);
 		if (b == null) {
 			return false;
 		}
@@ -153,7 +159,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		}
 		
 		//byte[] b = Util.sGetBinaryfromString(option);
-		byte[] b = DataFormat.hexStringToByteArray(option);
+	//	byte[] b = DataFormat.hexStringToByteArray(option);
+		byte[] b=Util.sGetBinaryfromString(option);
 		if (b == null) {
 			return false;
 		}
@@ -173,7 +180,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		}
 		
 		//byte[] b = Util.sGetBinaryfromString(values);
-		byte[] b = DataFormat.hexStringToByteArray(values);
+	//	byte[] b = DataFormat.hexStringToByteArray(values);
+		byte[]b=Util.sGetBinaryfromString(values);
 		if (b == null) {
 			return false;
 		}
@@ -192,8 +200,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(mac);
-		byte[] b = DataFormat.hexStringToByteArray(mac);
+		byte[] b = Util.sGetBinaryfromString(mac);
+		//byte[] b = DataFormat.hexStringToByteArray(mac);
 		if (b == null) {
 			return false;
 		}
@@ -418,8 +426,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(amount);
-		byte[] b = DataFormat.hexStringToByteArray(amount);
+		byte[] b = Util.sGetBinaryfromString(amount);
+	//	byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
  		}
@@ -437,8 +445,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(amount);
-		byte[] b = DataFormat.hexStringToByteArray(amount);
+		byte[] b = Util.sGetBinaryfromString(amount);
+		//byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
  		}
@@ -456,8 +464,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(amount);
-		byte[] b = DataFormat.hexStringToByteArray(amount);
+		byte[] b = Util.sGetBinaryfromString(amount);
+	//byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
  		}
@@ -492,8 +500,8 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(amount);
-		byte[] b = DataFormat.hexStringToByteArray(amount);
+		byte[] b = Util.sGetBinaryfromString(amount);
+		//byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
  		}
@@ -652,5 +660,11 @@ public static final String scDescription = "±N0810ºÝ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		Resp_SW2 = mRespond[scRespDataOffset + dataLength + 1 - 2];
 		
 		return true;
+	}
+
+	@Override
+	protected void debugResponseData() {
+		// TODO Auto-generated method stub
+		
 	}
 }

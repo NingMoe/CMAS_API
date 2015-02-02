@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<EDC>
+	<DEBUG>
+		<PRINT>
+<ENABLE maxlen="1" readwrite="rw" type="num">0</ENABLE>
+</PRINT>
+		<FTP>
+			<ENABLE maxlen="1" readwrite="rw" type="num">0</ENABLE>
+			<IP maxlen="15" readwrite="rw" type="num">192.168.6.20</IP>
+			<ID maxlen="30" readwrite="rw" type="num">DEBUG</ID>
+			<PASSWORD maxlen="30" readwrite="rw" type="num">DEBUG</PASSWORD>
+		</FTP>
+		<SD>
+<ENABLE maxlen="1" readwrite="rw" type="num">0</ENABLE>
+</SD>
+	</DEBUG>
+	<MERCHANT name="特店資訊">
+	  	<PASSWORD>0000</PASSWORD>
+	</MERCHANT>
+	<TX>
+		<SERIALNO>0</SERIALNO>	
+		<SIGNONMAXTIME name="SIGNON時間間隔">24</SIGNONMAXTIME>
+		<OFFLINETXLIMIT name="離線交易筆數容許">1</OFFLINETXLIMIT>
+		<FORCEONLINELIMIT name="離線交易必須上傳筆數上限">100</FORCEONLINELIMIT>	
+		<MiniunitsADDVALUE name="加值最小單位">100</MiniunitsADDVALUE>		
+		<OPERATIONMODE name="加值最小單位">MANUAL</OPERATIONMODE>
+	</TX>
+	<DEVICE name="設備資訊">
+		<SSLEnable name="SSL功能開啟">2</SSLEnable>
+		<SAMSLOT name="SAM插槽位置">11</SAMSLOT>
+		<READER>
+			<PORT name="讀卡機埠號">COM2</PORT>
+			<BAUDRATE>115200</BAUDRATE>
+			<PARITY>N</PARITY>
+			<DATABITS>8</DATABITS>
+			<STOPBITS>1</STOPBITS>
+		</READER>
+		<ECR>
+			<PORT name="收銀機連接埠">COM1</PORT>
+			<BAUDRATE>115200</BAUDRATE>
+			<PARITY>N</PARITY>
+			<DATABITS>8</DATABITS>
+			<STOPBITS>1</STOPBITS>
+		</ECR>		
+	</DEVICE>	
+	<TM name="商店資訊">
+		<ID name="收銀機機號">00</ID>
+		<AgentNumber name="員工編號">0000</AgentNumber> 
+		<TITLE name="特店名稱"/>
+		<SUBTITLE name="分店名"/>
+		<RECEIPTNUM name="收據列印張數">2</RECEIPTNUM>
+		<RECEIPTTYPE1 name="收據第一聯">顧客收執聯</RECEIPTTYPE1>
+		<RECEIPTTYPE2 name="收據第二聯">商店存根聯</RECEIPTTYPE2>		
+		<RECEIPTREMARK name="收據備註">
+			<STRING1 name="收據備註1"/>
+			<STRING2 name="收據備註2"/>
+			<STRING3 name="收據備註3"/>
+			<STRING4 name="收據備註4"/>
+			<STRING5 name="收據備註5"/>
+		</RECEIPTREMARK>
+	</TM>		
+	
+	<BATCH name="交易批次">
+		<NO name="批次號碼">0</NO>	
+	</BATCH>
+	<ETHERNET name="網路設定">
+	 <CONNECTHOST>PRODUCTION</CONNECTHOST>
+	 <NETWORKMODE>INTERNET</NETWORKMODE>
+			<LOCAL name="本機網路設定">
+				<IP name="IP">192.168.1.1</IP>
+				<MASK name="MASK"/>
+				<GATEWAY name="GATEWAY"/>
+				<DNS name="DNS"/>
+				<MAC name="MAC"/>
+			</LOCAL>	
+		 	<HOST_PRODUCTION name="通訊設定">
+			<HOST name="連線主機">
+				<URL maxlen="64" name="HOST URL" readwrite="rw" type="str">cmas-gateway.easycard.com.tw</URL>
+			  <IP maxlen="15" name="HOST IP" readwrite="rw" type="str">203.70.119.18</IP>
+		  	<VIPIP maxlen="15" name="HOST IP" readwrite="rw" type="str">192.168.112.21</VIPIP>
+				<PORT maxlen="5" name="HOST PORT" readwrite="rw" type="str">7000</PORT>
+			</HOST>
+		  <FTP name="FTP">
+				<URL maxlen="32" name="FTP IP" readwrite="rw" type="str">cmas-ftp.easycard.com.tw</URL>
+				<IP maxlen="15" name="FTP IP" readwrite="rw" type="str">203.70.119.20</IP>
+				<VIPIP maxlen="15" name="HOST IP" readwrite="rw" type="str">192.168.112.20</VIPIP>
+				<LOGINID maxlen="32" name="FTP ID" readwrite="rw" type="str">ftp_edc</LOGINID>
+				<LOGINPASSWORD maxlen="32" name="FTP 密碼" readwrite="rw" type="str">Cmas@2013</LOGINPASSWORD>
+			</FTP>	
+			</HOST_PRODUCTION>	
+			<HOST_TESTING name="測試套主機通訊設定">
+				<HOST name="連線主機">
+				<URL maxlen="64" name="HOST URL" readwrite="rw" type="str">Cmas-gatewayt.easycard.com.tw</URL>
+				<IP maxlen="15" name="HOST IP" readwrite="rw" type="str">211.78.134.165</IP>
+				<VIPIP maxlen="15" name="HOST IP" readwrite="rw" type="str">211.78.134.165</VIPIP>
+				<PORT maxlen="5" name="HOST PORT" readwrite="rw" type="str">7000</PORT>
+			</HOST>
+		  <FTP name="FTP">
+				<URL maxlen="32" name="FTP IP" readwrite="rw" type="str">cmas-ftpt.easycard.com.tw</URL>
+				<IP maxlen="15" name="FTP IP" readwrite="rw" type="str">211.78.134.167</IP>
+				<VIPIP maxlen="15" name="HOST IP" readwrite="rw" type="str">211.78.134.167</VIPIP>
+				<LOGINID maxlen="32" name="FTP ID" readwrite="rw" type="str">ftp_edc</LOGINID>
+				<LOGINPASSWORD maxlen="32" name="FTP 密碼" readwrite="rw" type="str">123@abc</LOGINPASSWORD>
+			</FTP>	
+			</HOST_TESTING>
+			<HOST_DEVELOP name="開發套主機通訊設定">
+			<HOST name="連線主機">
+				<URL maxlen="64" name="HOST URL" readwrite="rw" type="str">172.16.99.54</URL>
+				<IP maxlen="15" name="HOST IP" readwrite="rw" type="str">172.16.99.53</IP>
+			  <VIPIP maxlen="15" name="HOST IP" readwrite="rw" type="str">172.16.99.54</VIPIP>
+				<PORT maxlen="5" name="HOST PORT" readwrite="rw" type="str">7000</PORT>
+			</HOST>
+		  <FTP name="FTP">
+				<URL maxlen="32" name="FTP IP" readwrite="rw" type="str">172.16.99.55</URL>
+				<IP maxlen="15" name="FTP IP" readwrite="rw" type="str">172.16.99.55</IP>
+				<VIPIP maxlen="15" name="HOST IP" readwrite="rw" type="str">172.16.99.55</VIPIP>
+				<LOGINID maxlen="32" name="FTP ID" readwrite="rw" type="str">ftp_edc</LOGINID>
+				<LOGINPASSWORD maxlen="32" name="FTP 密碼" readwrite="rw" type="str">123@abc</LOGINPASSWORD>
+			</FTP>	
+			</HOST_DEVELOP>
+	
+ </ETHERNET>  	
+</EDC>

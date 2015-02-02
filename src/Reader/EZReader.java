@@ -9,22 +9,17 @@ import org.apache.log4j.Logger;
 
 import Reader.PPR_Reset;
 
-import exception.*;
+
 import Utilities.*;
 
 
 public class EZReader{
 	
 	static Logger logger = Logger.getLogger(EZReader.class);
-	
-	
-    private String merchantId;//10001
-    private String merchantSTCode;//100001
+
     private RecvSender recvSender=null;
     
-    //public PPRReset pprReset = new PPRReset();
-    public PPR_Reset pprReset = new PPR_Reset();
- 	
+    
  	
     public EZReader(RecvSender rs){
     	logger.info("Start");
@@ -36,7 +31,8 @@ public class EZReader{
     public int exeCommand(APDU command)
     {
     	logger.info("Start");
-    	int successCode = RespCode.SUCCESS.getId();
+    	
+    	int result = RespCode.SUCCESS.getId();
     	
     	byte[] sendBuffer;
     	byte[] recvBuffer = null;
@@ -46,13 +42,22 @@ public class EZReader{
     		
     		
     		recvBuffer = recvSender.apduSendRecv(sendBuffer);
-    		if(recvBuffer==null) return RespCode.ERROR.getId();
+    		if(recvBuffer==null) {
+    			logger.error("recvBuffer is NULL");
+    			return RespCode.ERROR.getId();
+    		}
     		
     		if(command.SetRespond(recvBuffer)==false)
     		{
     			logger.error("command: "+command.getClass().getName()+",setRespond fail");
     			return RespCode.ERROR.getId();
     		}
+    		
+    		if((result = command.GetRespCode()) != 0x9000)    		
+    			logger.error("APDU respCode:"+String.format("%04X", result));
+    			
+    		
+    		
     	}
     	catch(Exception e)
     	{
@@ -60,43 +65,11 @@ public class EZReader{
     		return RespCode.ERROR.getId();
     	}
     	
-		return successCode;
+		return result;
     	
     	
     }
-    
-    
-	/**
-	 * @return the merchantId
-	 */
-	public String getMerchantId() {
-		return merchantId;
-	}
 
-
-	/**
-	 * @param merchantId the merchantId to set
-	 */
-	public void setMerchantId(String merchantId) {
-		this.merchantId = merchantId;
-	}
-
-
-	/**
-	 * @return the merchantSTCode
-	 */
-	public String getMerchantSTCode() {
-		return merchantSTCode;
-	}
-
-
-	/**
-	 * @param merchantSTCode the merchantSTCode to set
-	 */
-	public void setMerchantSTCode(String merchantSTCode) {
-		this.merchantSTCode = merchantSTCode;
-	}
-	
 }
 
 

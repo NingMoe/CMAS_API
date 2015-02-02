@@ -1,1 +1,4 @@
 bin/*
+.svn
+RecvFile*
+*.Dat

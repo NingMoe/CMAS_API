@@ -1,60 +1,118 @@
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException;
 
-import CMAS.CMAS;
+
+
+
+
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import Process.Process;
+import Process.Process_Signon;
+import Reader.RecvSender;
+import TransData.BatchInfo;
+import TransData.TMINFO;
+import CMAS.CMAS;
+import CMAS.CMASTAG;
+import CMAS.SSLClient;
+import CMAS.TransFormat;
 
 
 
-import org.apache.log4j.*;
 
 public class EasycardAPI {
-	
 	static Logger logger = Logger.getLogger(EasycardAPI.class);
 	
-
 	
-	public static void main(String Args[]) throws FileNotFoundException, IOException
+	
+	RecvSender rs = null;
+	public EasycardAPI() //throws FileNotFoundException, IOException
 	{
+		apiInit();
+		if(rs==null)
+			rs = new RecvSender();		
+	}
+	
+	public EasycardAPI(RecvSender posRs)
+	{
+		apiInit();
+		rs = posRs;
+	}
+	
+	private boolean apiInit(){
+		
 		try{
 			//setting log config properties
-			Properties logp = new Properties();			
-			logp.load(CMAS.class.getClassLoader().getResourceAsStream("log4j.properties"));
+			Properties logp = new Properties();	
+		//	logp.load(EasycardAPI.class.getResourceAsStream("log4j.properties"));
+			//logp.load(new FileInputStream(EasycardAPI.class.getResource("/").getPath() +  "Config/log4.properties"));
+			String path= this.getClass().getResource("/").getPath()+ Config.PATH.Config+ "log4j.properties";
+			
+			logp.load(new FileInputStream(path));
 			PropertyConfigurator.configure(logp);
-			//setting log end
-						
 			logger.info("********** App Start **********");
 			
-			//reset
-			Process p = new Process();
-			p.signOn();
+		}catch(Exception e){
 			
-			
-			
-						
-		}catch(IOException e)
-		{
-			logger.error(e.getMessage());			
+			logger.debug("init fail:"+e.getMessage());
+			return false;
 		}
-
-		/*
-		Properties  properties = new Properties();
-		 String path=EasycardAPI.class.getResource("/").getPath() +  "EasycardAPI.properties";
-         properties.load(new FileInputStream(path));
-	  
-         CMAS host=new CMAS();
-         host.LoadTransFormatTable("SG_Q");
 		
-*/
+		return true;
+	}
+	
 
+	public static  void Do_Signon()
+	{	
+		try{
+		
+			//reset
+			Process_Signon  p = new Process_Signon();
+			TMINFO tm=new TMINFO();
+			p.Start(tm);
+						
+	
+		}catch(IOException e){
+		logger.error(e.getMessage());	
+		}
+	}
+	
 
+	public static void readCardNumber(){	
+		try{
+		
+			logger.info("Start");		
+			Process process = new Process(rs);
+			logger.info("End");
+		
+	
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
 	}
 
+	public  static void main(String args[]) {	
+	     
+		logger.info("Start");
+		System.out.print("Start"); 
+	 	Properties logp = new Properties();	
+		//	logp.load(EasycardAPI.class.getResourceAsStream("log4j.properties"));
+			//logp.load(new FileInputStream(EasycardAPI.class.getResource("/").getPath() +  "Config/log4.properties"));
+			String path= EasycardAPI.class.getResource("/").getPath()+ Config.PATH.Config+ "log4j.properties";
+			
+			logp.load(new FileInputStream(path));
+			PropertyConfigurator.configure(logp);
+			logger.info("********** App Start **********");
+			
+	     Do_Signon();
+  
+	     logger.info("End");
+	}
+	
 }
