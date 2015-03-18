@@ -1,68 +1,225 @@
 package Process;
 
-
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import org.apache.log4j.Logger;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import CMAS.SSLClient;
+import CMAS.CmasDataSpec;
+import CMAS.CmasDataSpec.SubTag5596;
+import CMAS.CmasKernel;
+import Comm.FTP.Ftp4j;
+import Comm.Socket.*;
+import ErrorMessage.ApiRespCode;
+import ErrorMessage.CmasRespCode;
+import ErrorMessage.IRespCode;
 
-import Reader.RecvSender;
-import TransData.TransactionData;
+import Reader.EZReader;
+import Reader.PPR_Reset;
+import Reader.ApduRecvSender;
+import Reader.PPR_SignOn;
+
+
 
 public class Process {
 
-	 
-	 Properties  Process_properties;
-	 Properties Config_properties;
-	 TransactionData TransData;
-	 Date TransDateTime ;
+	 static Logger logger = Logger.getLogger(Process.class);
+ 
+	 private EZReader reader;// = new EZReader(recvSender);
+	 private String mTimeZone = "Asia/Taipei"; 
+	 private ConfigManager cfgManager = null;
+	 private ArrayList<Properties> cfgList = null;
+	//RS232控制權由EasyCard控制
+	 public Process()
+	 {		
+		 logger.info("Start");
+		 initConfig();
+		 Properties userDef = cfgList.get(ConfigManager.ConfigOrder.USER_DEF.ordinal());
+		 
+		 ApduRecvSender rs = new ApduRecvSender();
+		 rs.setPortName(userDef.getProperty("ReaderPort"));
+		 reader = new EZReader(rs);
+		 logger.info("End");
+	 }
 	
-	 RecvSender recvSender=null; 
-		public Process() throws FileNotFoundException, IOException
-		{
-	
-			 Config_properties= new Properties();
-			 String Path_EasycardAPI_properties=this.getClass().getResource("/").getPath() +  "./EasycardAPI.properties";
-			 Config_properties.load(new FileInputStream(Path_EasycardAPI_properties));
-			 Process_properties= new Properties();
-			 Process_properties.load(new FileInputStream(SSLClient.class.getResource("/").getPath() + Config.PATH.Process_Properties));
 		
+	//RS232控制權由POS控制
+	 public Process(ApduRecvSender rs)
+	 {	
+		 initConfig();
+		reader = new EZReader(rs);
+	 }
 
-			 if(recvSender==null)		
-				 recvSender = new RecvSender();
-
-		}
-	
-		public Process(RecvSender rs)
-		{
-			recvSender = rs;
-		}
-
-	public void Init()
+	private void initConfig() //throws FileNotFoundException, IOException
 	{
-		String newDeviceid=Process_properties.getProperty("NewDeviceID");
-		if( newDeviceid.isEmpty() ){
+		logger.info("Start");
+		cfgManager = new ConfigManager();
+		cfgList = cfgManager.prepareConfig();
+		 logger.info("End");
+	}
+	
+	/**
+	 * @return the mTimeZone
+	 */
+	public String getmTimeZone() {
+		logger.info("getter:"+this.mTimeZone);
+		return mTimeZone;
+	}
+
+
+	/**
+	 * @param mTimeZone the mTimeZone to set
+	 */
+	public void setmTimeZone(String mTimeZone) {
+		logger.info("setter:"+mTimeZone);
+		this.mTimeZone = mTimeZone;
+	}
+
+
+	public IRespCode doSignon()
+	{
+		logger.info("Start");
+		int []signOn0800 = {100, 300, 1100, 1101, 1200, 1201, 1300, 1301, 3700, 4100, 4101, 4102, 4103, 4104, 4200, 4210, 4802, 4820, 4823, 4824, 5301, 5307, 5308, 5361, 5362, 5363, 5364, 5365, 5366, 5368, 5369, 5370, 5371, 5501, 5503, 5504, 5510, 5588, 5596, 6000, 6002, 6003, 6004, 6400, 6408};
+		int []signOn0820 = {100, 300, 1100, 1101, 1200, 1300, 3700, 4100, 4200, 4210, 4825, 5501, 5503, 5504, 5510, 6406};
+		IRespCode result;
+		//Properties easyCardApip = cfgList.get(ConfigManager.ConfigOrder.EASYCARD_API.ordinal());
+		Properties txnInfo = cfgList.get(ConfigManager.ConfigOrder.TXN_INFO.ordinal());
+		Properties uderDef = cfgList.get(ConfigManager.ConfigOrder.USER_DEF.ordinal());
+		Properties hostInfo = cfgList.get(ConfigManager.ConfigOrder.HOST_INFO.ordinal());
+		
+		String cmasRquest=null;
+		String cmasResponse=null;
+		PPR_Reset pprReset = null;
+		PPR_SignOn pprSignon = null;
+		CmasDataSpec specResetResp = null;
+		CmasKernel kernel = null;
+		SSL ssl = null;
+		String t3900 = "19";
+		try{
+			//資料傳送控制
+			SubTag5596 t5596 = new CmasDataSpec().new SubTag5596();
+			int recvCnt = 0;
+			int totalCnt = 0;
+			while(t3900.equalsIgnoreCase("19") || (recvCnt < totalCnt))
+			{
+			
+				//PPR_Reset
+				pprReset = new PPR_Reset();		
+				pprReset.SetOffline(false);
+				pprReset.SetReq_TMLocationID(uderDef.getProperty("TM_Location_ID"));		
+				pprReset.SetReq_TMID(uderDef.getProperty("TM_ID"));		
+				int unixTimeStamp = (int) (System.currentTimeMillis() / 1000L);
+				pprReset.SetReq_TMTXNDateTime(unixTimeStamp);
 				
+				pprReset.SetReq_TMSerialNumber(Integer.valueOf(txnInfo.getProperty("TM_Serial_Number")));
+				pprReset.SetReq_TMAgentNumber(uderDef.getProperty("TM_Agent_Number"));
+				pprReset.SetReq_TXNDateTime(unixTimeStamp, this.getmTimeZone());
+				
+				
+				pprReset.SetReq_SAMSlotControlFlag(true, 1);
+				
+				logger.debug("ready to call reader");
+				result = reader.exeCommand(pprReset);
+				if(result != ApiRespCode.SUCCESS)
+				{
+					logger.error("exe PPR_Reset error:"+String.format("%s", result.getId()));
+					return result;
+				}
+			
+				//prepare CMAS Data
+				CmasDataSpec specResetReq = new CmasDataSpec();				
+				kernel = new CmasKernel();
+				kernel.readerField2CmasSpec(pprReset, specResetReq, cfgList, t5596);
+				cmasRquest = kernel.packRequeset(signOn0800,specResetReq);
+				
+				//SSL-sendRecv
+				logger.debug(hostInfo.getProperty("HostUrl"));
+				ssl = new SSL(hostInfo.getProperty("HostUrl"), 
+						Integer.valueOf(hostInfo.getProperty("HostPort")), 
+						hostInfo.getProperty("SSLCertFile"));
+				if(!ssl.connect()){
+					logger.error("ssl connect fail");
+					return ApiRespCode.SSL_CONNECT_FAIL;
+				}
+				else 
+					logger.info("ssl OK");
+				
+				
+				if((cmasResponse = ssl.sendRequest(cmasRquest))!=null){
+					//got response
+					logger.debug("CMAS Response:"+cmasResponse);
+						
+					specResetResp = new CmasDataSpec(cmasResponse);
+					t3900 = specResetResp.getT3900();
+					if(t3900.equalsIgnoreCase("19")) {//序號重複
+						logger.info("TM Serial Number:"+specResetReq.getT1100()+", needed to change:"+specResetResp.getT1100());
+						//update SerialNumber
+						txnInfo.setProperty("TM_Serial_Number", specResetResp.getT1100());
+					}
+					else if(t3900.equalsIgnoreCase("00")){
+						pprSignon= new PPR_SignOn();
+						kernel.cmasSpec2ReaderField(specResetResp, pprSignon, cfgList);
+						totalCnt = Integer.valueOf(specResetResp.getT5596().getT559601());
+						recvCnt = Integer.valueOf(specResetResp.getT5596().getT559603());
+						t5596.setT559601(specResetResp.getT5596().getT559601());
+						t5596.setT559602(specResetResp.getT5596().getT559602());
+						t5596.setT559603(String.format("%08d", recvCnt+1));// recvCnt ++
+						t5596.setT559604(specResetResp.getT5596().getT559604());
+						
+						reader.exeCommand(pprSignon);
+						
+						//SerialNumber
+						txnInfo.setProperty("TM_Serial_Number", specResetResp.getT1100());
+						logger.debug("After SerialNumber ++:"+txnInfo.getProperty("TM_Serial_Number"));							
+					}
+					else {
+						logger.error("CMAS Reject Code:"+t3900);
+						return ApiRespCode.fromCode(t3900, CmasRespCode.values());					
+					}				
+				}
+				else{/*maybe TimeOut*/}
+			}//while
+			
+			if(t3900.equalsIgnoreCase("00")){
+				//SignOn Advice			
+				CmasDataSpec specSignonAdv = new CmasDataSpec();
+				kernel.readerField2CmasSpec(pprSignon, specSignonAdv, specResetResp, cfgList);
+				String cmasAdv = kernel.packRequeset(signOn0820, specSignonAdv);
+				logger.debug("SignOn Adv:"+cmasAdv);
+				cmasResponse = ssl.sendRequest(cmasAdv);
+				logger.debug("SignOn Adv Response:"+cmasResponse);
+			}
+			
+			//ftp download File
+			Ftp4j ftps = new Ftp4j(null, null);
+			if(ftps.connect2Server(hostInfo.getProperty("FtpIP"), 
+					990,
+					hostInfo.getProperty("FtpLoginId"), 
+					hostInfo.getProperty("FtpLoginPwd"),
+					true)){
+				logger.info("FTP Connect OK");
+				//ftps.download(serverPath, localPath)
+				
+			}
+			
+			
+		} catch(Exception e) {			
+			logger.error("Exception:"+e.getMessage());
+			e.printStackTrace();
 		}
+		
+		finally{			
+			try{
+				ssl.disconnect();
+				cfgManager.saveConfig();
+			} catch(Exception e) {
+				logger.error(e.getMessage());
+			}			
+		}
+		
+		logger.info("End");
+		return ApiRespCode.SUCCESS;
 	}
 
 }

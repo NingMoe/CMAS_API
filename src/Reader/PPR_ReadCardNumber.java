@@ -1,7 +1,10 @@
 package Reader;
 
+import javax.swing.text.Utilities;
+
 import org.apache.log4j.Logger;
 import Utilities.DataFormat;
+import Utilities.Util;
 
 public class PPR_ReadCardNumber extends APDU{
 
@@ -83,7 +86,7 @@ public class PPR_ReadCardNumber extends APDU{
 		request[reqTotalLength - 2] = Req_Le;
 		request[reqTotalLength - 1] = this.getEDC(request, reqTotalLength); // EDC
 		
-		logger.debug("request:"+DataFormat.hex2StringLog(request));
+		logger.debug("request:"+Util.hex2StringLog(request));
 		logger.info("End");
 		return request;
 	}
@@ -102,7 +105,7 @@ public class PPR_ReadCardNumber extends APDU{
 	}
 
 	@Override
-	protected void debugResponseData() {
+	public void debugResponseData() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -125,7 +128,7 @@ public class PPR_ReadCardNumber extends APDU{
 	 * @return the txnAmt
 	 */
 	public byte [] getTxnAmt() {
-		logger.info("getter:"+DataFormat.hex2StringLog(this.txnAmt));
+		logger.info("getter:"+Util.hex2StringLog(this.txnAmt));
 		return txnAmt;
 	}
 

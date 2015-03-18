@@ -39,17 +39,17 @@ public class TransFormat {
 	
 public TransFormat()
 {
-	  Path=CMAS.class.getResource("/").getPath() +  Config.PATH.Config+"transformat.xml";
+//	  Path=CMAS.class.getResource("/").getPath() +  Config.PATH.Config+"transformat.xml";
 
 }
 
 	/*LoadTransFormatTable
-	 * ¨Ì¥æ©öÃþ§OÅª¨ú  TransFormat Table ¨ú±o¸Ó¥æ©öªº¤W¶ÇÄæ¦ì
+	 * ï¿½Ì¥ï¿½ï¿½ï¿½ï¿½ï¿½OÅªï¿½ï¿½  TransFormat Table ï¿½ï¿½ï¿½oï¿½Ó¥ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½
 	 * input :
-	 * 		TransType ¥æ©öºØÃþ ¥[­È¡BÁÊ³f¡B¨ú®ø....
+	 * 		TransType ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½[ï¿½È¡Bï¿½Ê³fï¿½Bï¿½ï¿½ï¿½ï¿½....
 	 * 		TxStatus	TxStatus_REQ  ' TxStatus_RSP....
 	 * output
-	 * 		«Ê¥]Tag¼Æ¶q
+	 * 		ï¿½Ê¥]Tagï¿½Æ¶q
 	 * 	 */
   public  List<CMASTAG>   Load(int inTxnType,int inTransStatus)
   {
@@ -83,7 +83,7 @@ public TransFormat()
 		return 	TransTagList;
   }
   
-  /*Åª¨ú©Ò¦³tag ¸ê®Æ
+  /*Åªï¿½ï¿½ï¿½Ò¦ï¿½tag ï¿½ï¿½ï¿½
    * 
    */
   public  List<CMASTAG>   Load()

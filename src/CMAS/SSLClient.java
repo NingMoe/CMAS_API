@@ -43,7 +43,7 @@ public class SSLClient {
  
    //        SendfilePath = properties.getProperty("SendFilePath");
   //         ReceivefilePath = properties.getProperty("ReceiveFilePath");
-           	   keyPath =this.getClass().getResource("/").getPath() + Config.PATH.Config+"CMAS-FTP51T.jks";
+           //	   keyPath =this.getClass().getResource("/").getPath() + Config.PATH.Config+"CMAS-FTP51T.jks";
   //         keyPass = properties.getProperty("KeyPass");
 
       /*     String content = "";

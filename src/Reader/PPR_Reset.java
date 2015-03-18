@@ -3,8 +3,6 @@ package Reader;
 
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
@@ -16,7 +14,7 @@ import Utilities.*;
 public class PPR_Reset extends APDU {
 
 	static Logger logger = Logger.getLogger(PPR_Reset.class);
-	public static final String scDescription = "­«¸mReader, ±Nªì©l¤Æ°Ñ¼Æ¶Çµ¹Reader, ¨Ã¨ú±oSAToken/S-TAC"; 
+	public static final String scDescription = "é‡ç½®Reader, å°‡åˆå§‹åŒ–åƒæ•¸å‚³çµ¦Reader, ä¸¦å–å¾—SAToken/S-TAC"; 
 	
 	private static PPR_Reset sThis = null;
 	
@@ -70,7 +68,7 @@ public class PPR_Reset extends APDU {
 		logger.info("End");
 	}
 	
-	/* PPR_Reset_Offline, (Â÷½u)­«»sReader, ±Nªì©l¤Æ°Ñ¼Æ¶Çµ¹Reader */
+	/* PPR_Reset_Offline, (é›¢ç·š)é‡è£½Reader, å°‡åˆå§‹åŒ–åƒæ•¸å‚³çµ¦Reader */
 	public void SetOffline(boolean bOffline) {
 		
 		logger.info("setter:"+bOffline);
@@ -82,7 +80,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* TM Location ID, 10 bytes, TM, ²×ºİ¾÷(TM)©±¸¹, ASCII, ¥k¾a¥ª¸É0 */
+	/* TM Location ID, 10 bytes, TM, çµ‚ç«¯æ©Ÿ(TM)åº—è™Ÿ, ASCII, å³é å·¦è£œ0 */
 	private static final int scReqData_TMLocationID = scReqDataOffset + 0;
 	private static final int scReqData_TMLocationID_Len = 10;
 	public boolean SetReq_TMLocationID(String id) {
@@ -115,7 +113,7 @@ public class PPR_Reset extends APDU {
 		return result;
 	}
 	
-	/* TM ID, 2 bytes, TM, ²×ºİ¾÷(TM)¾÷¸¹, ASCII, ¥k¾a¥ª¸É0 */
+	/* TM ID, 2 bytes, TM, çµ‚ç«¯æ©Ÿ(TM)æ©Ÿè™Ÿ, ASCII, å³é å·¦è£œ0 */
 	private static final int scReqData_TMID = scReqData_TMLocationID + scReqData_TMLocationID_Len;
 	private static final int scReqData_TMID_Len = 2;
 	public boolean SetReq_TMID(String id) {
@@ -149,10 +147,12 @@ public class PPR_Reset extends APDU {
 		return result;
 	}
 	
-	/* TM TXN Date Time, 14 bytes, TM, ²×ºİ¾÷(TM)¥æ©ö¤é´Á®É¶¡, ASCII, YYYYMMDDhhmmss */
+	/* TM TXN Date Time, 14 bytes, TM, çµ‚ç«¯æ©Ÿ(TM)äº¤æ˜“æ—¥æœŸæ™‚é–“, ASCII, YYYYMMDDhhmmss */
 	private static final int scReqData_TMTXNDateTime = scReqData_TMID + scReqData_TMID_Len;
 	private static final int scReqData_TMTXNDateTime_Len = 14;
 	public void SetReq_TMTXNDateTime(int unixTimeStamp) {
+		
+		logger.info("Start");
 		String dateTime = Util.sGetDateTime(unixTimeStamp);
 		
 		logger.info("setter: int("+unixTimeStamp+"), format:"+dateTime);
@@ -160,6 +160,8 @@ public class PPR_Reset extends APDU {
 			mRequest[scReqData_TMTXNDateTime + i] = (byte) dateTime.charAt(i);
 		}
 		mReqDirty = true;
+		
+		logger.info("End");
 	}
 	
 	public String GetReq_TMTXNDateTime() {
@@ -188,10 +190,13 @@ public class PPR_Reset extends APDU {
 		return s;
 	}
 	
-	/* TM Serial Number, 6 bytes, TM, ²×ºİ¾÷(TM)¥æ©ö§Ç¸¹, ASCII, ¾a¥k¥ª¸É0, ­È¶·¬°0~9, ¥æ©ö¦¨¥\®É¶i¸¹, ¥¢±Ñ®É¤£¶i¸¹ */
+	/* TM Serial Number, 6 bytes, TM, çµ‚ç«¯æ©Ÿ(TM)äº¤æ˜“åºè™Ÿ, ASCII, é å³å·¦è£œ0, å€¼é ˆç‚º0~9, äº¤æ˜“æˆåŠŸæ™‚é€²è™Ÿ, å¤±æ•—æ™‚ä¸é€²è™Ÿ */
 	private static final int scReqData_TMSerialNumber = scReqData_TMTXNDateTime + scReqData_TMTXNDateTime_Len;
 	private static final int scReqData_TMSerialNumber_Len = 6;
 	public boolean SetReq_TMSerialNumber(int sn) {
+		
+		
+		logger.info("setter:"+sn);
 		String s = String.format("%06d", sn);
 		
 		logger.info("setter:"+s);
@@ -201,15 +206,19 @@ public class PPR_Reset extends APDU {
 		
 		mReqDirty = true;
 		
+		
 		return true;
 	}
-	/*
-	public byte[] GetReq_TMSerialNumber() {
-		return Arrays.copyOfRange(mRequest, scReqData_TMSerialNumber, scReqData_TMSerialNumber + scReqData_TMSerialNumber_Len);
-	}
-	*/
 	
-	/* TM Agent Number, 4 bytes, TM, ²×ºİ¾÷(TM)¦¬»È­û¥N¸¹, ASCII, ¾a¥k¥ª¸É0, ­È¶·¬°0~9 */
+	public byte[] GetReq_TMSerialNumber() {
+		
+		byte []result = Arrays.copyOfRange(mRequest, scReqData_TMSerialNumber, scReqData_TMSerialNumber + scReqData_TMSerialNumber_Len);
+		logger.info("getter:"+Util.bcd2Ascii(result));
+		return result;
+	}
+	
+	
+	/* TM Agent Number, 4 bytes, TM, çµ‚ç«¯æ©Ÿ(TM)æ”¶éŠ€å“¡ä»£è™Ÿ, ASCII, é å³å·¦è£œ0, å€¼é ˆç‚º0~9 */
 	private static final int scReqData_TMAgentNumber = scReqData_TMSerialNumber + scReqData_TMSerialNumber_Len;
 	private static final int scReqData_TMAgentNumber_Len = 4;
 	public boolean SetReq_TMAgentNumber(String an) {
@@ -247,7 +256,7 @@ public class PPR_Reset extends APDU {
 		return result;
 	}
 	
-	/* TXN Date Time, 4 bytes, TM, ¥æ©ö¤é´Á, Unsigned and LSB First (UnixDateTime) */
+	/* TXN Date Time, 4 bytes, TM, äº¤æ˜“æ—¥æœŸ, Unsigned and LSB First (UnixDateTime) */
 	private static final int scReqData_TXNDateTime = scReqData_TMAgentNumber + scReqData_TMAgentNumber_Len;
 	private static final int scReqData_TXNDateTime_Len = 4;
 	public void SetReq_TXNDateTime(int unixTimeStamp, String timeZone) {
@@ -265,7 +274,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* Location ID, 1 byte, ©w­È, ÂÂ¼t¯¸¥N½X, ¥Ñ±y¹C¥d¤½¥q«ü©w */
+	/* Location ID, 1 byte, å®šå€¼, èˆŠå» ç«™ä»£ç¢¼, ç”±æ‚ éŠå¡å…¬å¸æŒ‡å®š */
 	private static final int scReqData_LocationID = scReqData_TXNDateTime + scReqData_TXNDateTime_Len;
 	private static final int scReqData_LocationID_Len = 1;
 	public void SetReq_LocationID(byte id) {
@@ -276,7 +285,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* New Location ID, ©w­È, ·s¼t¯¸¥N½X, Unsigned and LSB First, ¥Ñ±y¹C¥d¤½¥q«ü©w */
+	/* New Location ID, å®šå€¼, æ–°å» ç«™ä»£ç¢¼, Unsigned and LSB First, ç”±æ‚ éŠå¡å…¬å¸æŒ‡å®š */
 	private static final int scReqData_NewLocationID = scReqData_LocationID + scReqData_LocationID_Len;
 	private static final int scReqData_NewLocationID_Len = 2;
 	public void SetReq_NewLocationID(short id) {
@@ -291,22 +300,22 @@ public class PPR_Reset extends APDU {
 		byte data[] = Arrays.copyOfRange(mRequest, scReqData_NewLocationID, 
 				scReqData_NewLocationID + scReqData_NewLocationID_Len);
 		
-		logger.info("getter:"+DataFormat.hex2StringLog(data));
+		logger.info("getter:"+Util.hex2StringLog(data));
 		return data;
 	
 		
 	}
 	
-	/* Service Provider ID, 1 byte, ©w­È, ÂÂªA°È·~ªÌ¥N½X, ¸É0 */
+	/* Service Provider ID, 1 byte, å®šå€¼, èˆŠæœå‹™æ¥­è€…ä»£ç¢¼, è£œ0 */
 	private static final int scReqData_ServiceProviderID = scReqData_NewLocationID + scReqData_NewLocationID_Len;
 	private static final int scReqData_ServiceProviderID_Len = 1;
 	
-	/* New Service Provider ID, 3 bytes, ©w­È, ·sªA°È·~ªÌ¥N½X, ¸É0, Unsigned and LSB First, ¥Ñ±y¹C¥d¤½¥q«ü©w */
+	/* New Service Provider ID, 3 bytes, å®šå€¼, æ–°æœå‹™æ¥­è€…ä»£ç¢¼, è£œ0, Unsigned and LSB First, ç”±æ‚ éŠå¡å…¬å¸æŒ‡å®š */
 	private static final int scReqData_NewServiceProviderID = scReqData_ServiceProviderID + scReqData_ServiceProviderID_Len;
 	private static final int scReqData_NewServiceProviderID_Len = 3;
 	public void SetReq_NewServiceProviderID(byte[] bytes) {
 		
-		logger.info("setter:"+DataFormat.hex2StringLog(bytes));
+		logger.info("setter:"+Util.hex2StringLog(bytes));
 		if (bytes == null || bytes.length != 3) {
 			logger.error("null or len wrong");
 			return;
@@ -320,7 +329,7 @@ public class PPR_Reset extends APDU {
 		byte[] result = Arrays.copyOfRange(mRequest, scReqData_NewServiceProviderID, 
 				scReqData_NewServiceProviderID + scReqData_NewServiceProviderID_Len); 
 		
-		logger.info("getter:"+DataFormat.hex2StringLog(result));
+		logger.info("getter:"+Util.hex2StringLog(result));
 		return result; 
 	}
 	
@@ -336,30 +345,30 @@ public class PPR_Reset extends APDU {
 	}
 	
 	/* 
-	 * PPR_Reset_Offline±M¥Î°Ñ¼Æ³]©w, 1 byte, TM
-	 * One Day Quota Write For Micro Payment: Bit 0~1, ¤pÃB®ø¶O¤é­­ÃB¼g¤J
-	 * Check EV Flag For Mifare Only: Bit 2, ÀË¬d¾lÃBºX¼Ğ
-	 * Merchant Limit Use: Bit 3, ¤pÃB®ø¶O³q¸ô­­¨î¨Ï¥ÎºX¼Ğ
-	 * One Day Quota Flag For Micro Payment: Bit 4~5, ¤pÃB®ø¶O¤é­­ÃBºX¼Ğ
-	 * Once Quota Flag For Micro Payment: Bit 6, ¤pÃB®ø¶O¦¸­­ÃBºX¼Ğ 
-	 * Pay On Behalf Flag: Bit 7, ¬O§_¤¹³\¥N¹Ô
+	 * PPR_Reset_Offlineå°ˆç”¨åƒæ•¸è¨­å®š, 1 byte, TM
+	 * One Day Quota Write For Micro Payment: Bit 0~1, å°é¡æ¶ˆè²»æ—¥é™é¡å¯«å…¥
+	 * Check EV Flag For Mifare Only: Bit 2, æª¢æŸ¥é¤˜é¡æ——æ¨™
+	 * Merchant Limit Use: Bit 3, å°é¡æ¶ˆè²»é€šè·¯é™åˆ¶ä½¿ç”¨æ——æ¨™
+	 * One Day Quota Flag For Micro Payment: Bit 4~5, å°é¡æ¶ˆè²»æ—¥é™é¡æ——æ¨™
+	 * Once Quota Flag For Micro Payment: Bit 6, å°é¡æ¶ˆè²»æ¬¡é™é¡æ——æ¨™ 
+	 * Pay On Behalf Flag: Bit 7, æ˜¯å¦å…è¨±ä»£å¢Š
 	 */
 	private static final int scReqData_OfflineParams = scReqData_NewServiceProviderID + scReqData_NewServiceProviderID_Len;
 	private static final int scReqData_OfflineParams_Len = 1;
 	public enum OneDayQuotaWriteForMicroPayment {
-		NMNC, // T=Mifare»PT-CPU³£¤£¼g¤J
-		WMNC, // T=Mifare¼g¤J, T-CPU¤£¼g¤J
-		NMWC, // T=Mifare¤£¼g¤J, T-CPU¼g¤J
-		WNWC  // T=Mifare»PT-CPU³£¼g¤J
+		NMNC, // T=Mifareèˆ‡T-CPUéƒ½ä¸å¯«å…¥
+		WMNC, // T=Mifareå¯«å…¥, T-CPUä¸å¯«å…¥
+		NMWC, // T=Mifareä¸å¯«å…¥, T-CPUå¯«å…¥
+		WNWC  // T=Mifareèˆ‡T-CPUéƒ½å¯«å…¥
 	}
 	
 	public enum OneDayQuotaFlagForMicroPayment {
-		NCNA, // ¤£ÀË¬d, ¤£²Ö­p¤é­­ÃB
-		NCYA, // ¤£ÀË¬d, ²Ö­p¤é­­ÃB
-		YCNA, // ÀË¬d, ¤£²Ö­p¤é­­ÃB
-		YCYA, // ÀË¬d, ²Ö­p¤é­­ÃB
+		NCNA, // ä¸æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
+		NCYA, // ä¸æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
+		YCNA, // æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
+		YCYA, // æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 	}
-	/* One Day Quota Write For Micro Payment: Bit 0~1, ¤pÃB®ø¶O¤é­­ÃB¼g¤J, TM */
+	/* One Day Quota Write For Micro Payment: Bit 0~1, å°é¡æ¶ˆè²»æ—¥é™é¡å¯«å…¥, TM */
 	public void SetReq_OneDayQuotaWriteForMicroPayment(OneDayQuotaWriteForMicroPayment e) {
 	
 		byte b = mRequest[scReqData_OfflineParams];
@@ -368,15 +377,15 @@ public class PPR_Reset extends APDU {
 		b = ClearBit(b, 0);
 		b = ClearBit(b, 1);
 		switch (e) {
-		case NMNC: // T=Mifare»PT-CPU³£¤£¼g¤J
+		case NMNC: // T=Mifareèˆ‡T-CPUéƒ½ä¸å¯«å…¥
 			break;
-		case WMNC: // T=Mifare¼g¤J, T-CPU¤£¼g¤J
+		case WMNC: // T=Mifareå¯«å…¥, T-CPUä¸å¯«å…¥
 			b = SetBit(b, 0);
 			break;
-		case NMWC: // T=Mifare¤£¼g¤J, T-CPU¼g¤J
+		case NMWC: // T=Mifareä¸å¯«å…¥, T-CPUå¯«å…¥
 			b = SetBit(b, 1);
 			break;
-		case WNWC:  // T=Mifare»PT-CPU³£¼g¤J
+		case WNWC:  // T=Mifareèˆ‡T-CPUéƒ½å¯«å…¥
 			b = SetBit(b, 0);
 			b = SetBit(b, 1);
 			break;
@@ -386,7 +395,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* Check EV Flag For Mifare Only: Bit 2, ÀË¬d¾lÃBºX¼Ğ, TM */
+	/* Check EV Flag For Mifare Only: Bit 2, æª¢æŸ¥é¤˜é¡æ——æ¨™, TM */
 	public void SetReq_CheckEVFlagForMifareOnly(boolean bCheck) {
 		byte b = mRequest[scReqData_OfflineParams];
 		logger.info("setter:"+bCheck);
@@ -400,7 +409,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* Merchant Limit Use: Bit 3, ¤pÃB®ø¶O³q¸ô­­¨î¨Ï¥ÎºX¼Ğ, TM */
+	/* Merchant Limit Use: Bit 3, å°é¡æ¶ˆè²»é€šè·¯é™åˆ¶ä½¿ç”¨æ——æ¨™, TM */
 	public void SetReq_MerchantLimitUse(boolean bLimit) {
 		byte b = mRequest[scReqData_OfflineParams];
 		if (bLimit) {
@@ -413,7 +422,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* One Day Quota Flag For Micro Payment: Bit 4~5, ¤pÃB®ø¶O¤é­­ÃBºX¼Ğ, TM */
+	/* One Day Quota Flag For Micro Payment: Bit 4~5, å°é¡æ¶ˆè²»æ—¥é™é¡æ——æ¨™, TM */
 	public void SetReq_OneDayQuotaFlagForMicroPayment(OneDayQuotaFlagForMicroPayment e) {
 		byte b = mRequest[scReqData_OfflineParams];
 		
@@ -421,15 +430,15 @@ public class PPR_Reset extends APDU {
 		b = ClearBit(b, 5);
 		
 		switch (e) {
-		case NCNA: // ¤£ÀË¬d, ¤£²Ö­p¤é­­ÃB
+		case NCNA: // ä¸æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
 			break;
-		case NCYA: // ¤£ÀË¬d, ²Ö­p¤é­­ÃB
+		case NCYA: // ä¸æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 			b = SetBit(b, 4);
 			break;
-		case YCNA: // ÀË¬d, ¤£²Ö­p¤é­­ÃB
+		case YCNA: // æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
 			b = SetBit(b, 5);
 			break;
-		case YCYA: // ÀË¬d, ²Ö­p¤é­­ÃB
+		case YCYA: // æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 			b = SetBit(b, 4);
 			b = SetBit(b, 5);
 			break;
@@ -439,7 +448,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* Once Quota Flag For Micro Payment: Bit 6, ¤pÃB®ø¶O¦¸­­ÃBºX¼Ğ, TM */ 
+	/* Once Quota Flag For Micro Payment: Bit 6, å°é¡æ¶ˆè²»æ¬¡é™é¡æ——æ¨™, TM */ 
 	public void SetReq_OnceQuotaFlagForMicroPayment(boolean bLimit) {
 		byte b = mRequest[scReqData_OfflineParams];
 		if (bLimit) {
@@ -452,7 +461,7 @@ public class PPR_Reset extends APDU {
 		mReqDirty = true;
 	}
 	
-	/* Pay On Behalf Flag: Bit 7, ¬O§_¤¹³\¥N¹Ô, TM */
+	/* Pay On Behalf Flag: Bit 7, æ˜¯å¦å…è¨±ä»£å¢Š, TM */
 	public void SetReq_PayOnBehalfFlag(boolean bAllowed) {
 		byte b = mRequest[scReqData_OfflineParams];
 		if (bAllowed) {
@@ -466,7 +475,7 @@ public class PPR_Reset extends APDU {
 	}
 	
 	/* One Day Quota For Micro Payment,
-	 * ¤pÃB®ø¶O¤é­­ÃBÃB«×, 2 bytes, TM, Unsigned and LSB First 
+	 * å°é¡æ¶ˆè²»æ—¥é™é¡é¡åº¦, 2 bytes, TM, Unsigned and LSB First 
 	 */
 	private static final int scReqData_OneDayQuota_ForMicroPayment = scReqData_OfflineParams + scReqData_OfflineParams_Len;
 	private static final int scReqData_OneDayQuota_ForMicroPayment_Len = 2;
@@ -478,7 +487,7 @@ public class PPR_Reset extends APDU {
 	}
 	
 	/* Once Quota For Micro Payment,
-	 * ¤pÃB®ø¶O¦¸­­ÃBÃB«×, 2 bytes, TM, Unsigned and LSB First 
+	 * å°é¡æ¶ˆè²»æ¬¡é™é¡é¡åº¦, 2 bytes, TM, Unsigned and LSB First 
 	 */
 	private static final int scReqData_OnceQuota_ForMicroPayment = scReqData_OneDayQuota_ForMicroPayment + scReqData_OneDayQuota_ForMicroPayment_Len;
 	private static final int scReqData_OnceQuota_ForMicroPayment_Len = 2;
@@ -490,12 +499,15 @@ public class PPR_Reset extends APDU {
 	}
 	
 	/* SAM Slot Control Flag,
-	 * SAM¥d¦ì¸m±±¨îºX¼Ğ, 1 byte, TM 
+	 * SAMå¡ä½ç½®æ§åˆ¶æ——æ¨™, 1 byte, TM 
 	 */
 	private static final int scReqData_SAMSlotControlFlag = scReqData_OnceQuota_ForMicroPayment + scReqData_OnceQuota_ForMicroPayment_Len;
 	private static final int scReqData_SAMSlotControlFlag_Len = 1;
 	public boolean SetReq_SAMSlotControlFlag(boolean bGen2, int slot) {
+		
+		logger.info("Start");
 		if (slot < 0 || slot > 15) {
+			logger.error("slot("+slot+") wrong");
 			return false;
 		}
 		
@@ -511,10 +523,11 @@ public class PPR_Reset extends APDU {
 		mRequest[scReqData_SAMSlotControlFlag] = b;
 		mReqDirty = true;
 		
+		logger.info("End");
 		return true;
 	}
 	
-	/* RFU (Reserved For Use), «O¯d, TM */
+	/* RFU (Reserved For Use), ä¿ç•™, TM */
 	@SuppressWarnings("unused")
 	private static final int scReqData_RFU = scReqData_SAMSlotControlFlag + scReqData_SAMSlotControlFlag_Len;
 	@SuppressWarnings("unused")
@@ -546,7 +559,7 @@ public class PPR_Reset extends APDU {
 		return scRespLength;
 	}
 	
-	/* Spec. Version Number, 1 byte, Reader, Host¿ëÃÑª©¸¹, ©w­È0x01 */
+	/* Spec. Version Number, 1 byte, Reader, Hostè¾¨è­˜ç‰ˆè™Ÿ, å®šå€¼0x01 */
 	private static final int scRespData_SpecVersionNumber = scRespDataOffset;
 	private static final int scRespData_SpecVersionNumber_Len = 1;
 	public byte GetResp_SpecVersionNumber() {
@@ -556,7 +569,7 @@ public class PPR_Reset extends APDU {
 		return mRespond[scRespData_SpecVersionNumber];
 	}
 	
-	/* Reader ID, 4 bytes, Reader, Åª¥d¾÷½s¸¹ */
+	/* Reader ID, 4 bytes, Reader, è®€å¡æ©Ÿç·¨è™Ÿ */
 	private static final int scRespData_ReaderID = scRespData_SpecVersionNumber + scRespData_SpecVersionNumber_Len;
 	private static final int scRespData_ReaderID_Len = 4;
 	public byte[] GetResp_ReaderID() {
@@ -566,7 +579,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_ReaderID, scRespData_ReaderID + scRespData_ReaderID_Len);
 	}
 	
-	/* Reader FW Version, 6 bytes, Reader, Åª¥d¾÷¶´Åéª©¥» */
+	/* Reader FW Version, 6 bytes, Reader, è®€å¡æ©ŸéŸŒé«”ç‰ˆæœ¬ */
 	private static final int scRespData_ReaderFWVersion = scRespData_ReaderID + scRespData_ReaderID_Len;
 	private static final int scRespData_ReaderFWVersion_Len = 6;
 	public byte[] GetResp_ReaderFWVersion() {
@@ -576,7 +589,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_ReaderFWVersion, scRespData_ReaderFWVersion + scRespData_ReaderFWVersion_Len);
 	}
 	
-	/* SAM ID, 8 bytes, ÂÂSAM Card, SAM½s¸¹, Unsigned and MSB First, P2=0x01®É¸É0x00 */
+	/* SAM ID, 8 bytes, èˆŠSAM Card, SAMç·¨è™Ÿ, Unsigned and MSB First, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_SAMID = scRespData_ReaderFWVersion + scRespData_ReaderFWVersion_Len;
 	private static final int scRespData_SAMID_Len = 8;
 	public byte[] GetResp_SAMID() {
@@ -586,7 +599,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_SAMID, scRespData_SAMID + scRespData_SAMID_Len);
 	}
 	
-	/* SAM SN, 4 bytes, ÂÂSAM Card, SAM¨Ï¥Î¦¸¼Æ, Unsigned and MSB First, P2=0x01®É¸É0x00 */
+	/* SAM SN, 4 bytes, èˆŠSAM Card, SAMä½¿ç”¨æ¬¡æ•¸, Unsigned and MSB First, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_SAMSN = scRespData_SAMID + scRespData_SAMID_Len;
 	private static final int scRespData_SAMSN_Len = 4;
 	public byte[] GetResp_SAMSN() {
@@ -596,7 +609,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_SAMSN, scRespData_SAMSN + scRespData_SAMSN_Len);
 	}
 	
-	/* SAM CRN, 8 bytes, ÂÂSAM Card, SAM²£¥ÍªºRandom Number, P2=0x01®É¸É0x00 */
+	/* SAM CRN, 8 bytes, èˆŠSAM Card, SAMç”¢ç”Ÿçš„Random Number, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_SAMCRN = scRespData_SAMSN + scRespData_SAMSN_Len;
 	private static final int scRespData_SAMCRN_Len = 8;
 	public byte[] GetResp_SAMCRN() {
@@ -606,18 +619,21 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_SAMCRN, scRespData_SAMCRN + scRespData_SAMCRN_Len);
 	}
 	
-	/* Device ID, 4 bytes, ÂÂSAM Card, ÂÂ³]³Æ½s¸¹, Unsigned and LSB First */
+	/* Device ID, 4 bytes, èˆŠSAM Card, èˆŠè¨­å‚™ç·¨è™Ÿ, Unsigned and LSB First */
 	private static final int scRespData_DeviceID = scRespData_SAMCRN + scRespData_SAMCRN_Len;
 	private static final int scRespData_DeviceID_Len = 4;
-	/* Device ID, ÂÂ³]³Æ½s¸¹, ÂÂSAM Card, Unsigned and LSB First, SAM */
+	/* Device ID, èˆŠè¨­å‚™ç·¨è™Ÿ, èˆŠSAM Card, Unsigned and LSB First, SAM */
 	public byte[] GetResp_DeviceID() {
 		if (mRespond == null) {
 			return null;
 		}
-		return Arrays.copyOfRange(mRespond, scRespData_DeviceID, scRespData_DeviceID + scRespData_DeviceID_Len);
+		byte[] result = Arrays.copyOfRange(mRespond, scRespData_DeviceID, scRespData_DeviceID + scRespData_DeviceID_Len); 
+		
+		logger.info("getter:"+Util.bcd2Ascii(result));
+		return result;
 	}
 	
-	/* SAM Key Version, 1 byte, ÂÂSAM Card, SAMª÷Æ_ª©¥» */
+	/* SAM Key Version, 1 byte, èˆŠSAM Card, SAMé‡‘é‘°ç‰ˆæœ¬ */
 	private static final int scRespData_SAMKeyVersion = scRespData_DeviceID + scRespData_DeviceID_Len;
 	private static final int scRespData_SAMKeyVersion_Len = 1;
 	public byte GetResp_SAMKeyVersion() {
@@ -627,10 +643,10 @@ public class PPR_Reset extends APDU {
 		return mRespond[scRespData_SAMKeyVersion];
 	}
 	
-	/* S-TAC, 8 bytes, ÂÂSAM Card, SAM»{ÃÒ½X, P2=0x01®É¸É0x00 */
+	/* S-TAC, 8 bytes, èˆŠSAM Card, SAMèªè­‰ç¢¼, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_S_TAC = scRespData_SAMKeyVersion + scRespData_SAMKeyVersion_Len;
 	private static final int scRespData_S_TAC_Len = 8;
-	/* S-TAC, SAM»{ÃÒ½X, ÂÂSAM Card, P2=0x01®É¸É0x00, SAM */
+	/* S-TAC, SAMèªè­‰ç¢¼, èˆŠSAM Card, P2=0x01æ™‚è£œ0x00, SAM */
 	public byte[] GetResp_S_TAC() {
 		if (mRespond == null) {
 			return null;
@@ -638,7 +654,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_S_TAC, scRespData_S_TAC + scRespData_S_TAC_Len);
 	}
 	
-	/* SAM Version Number, 1 byte, ·sSAM Card, SAMª©¥» */
+	/* SAM Version Number, 1 byte, æ–°SAM Card, SAMç‰ˆæœ¬ */
 	private static final int scRespData_SAMVersionNumber = scRespData_S_TAC + scRespData_S_TAC_Len;
 	private static final int scRespData_SAMVersionNumber_Len = 1;
 	public byte GetResp_SAMVersionNumber() {
@@ -648,7 +664,7 @@ public class PPR_Reset extends APDU {
 		return mRespond[scRespData_SAMVersionNumber];
 	}
 	
-	/* SID, 8 bytes, ·sSAM Card, SAM ID, Unsigned and MSB First */
+	/* SID, 8 bytes, æ–°SAM Card, SAM ID, Unsigned and MSB First */
 	private static final int scRespData_SAMIDNew = scRespData_SAMVersionNumber + scRespData_SAMVersionNumber_Len;
 	private static final int scRespData_SAMIDNew_Len = 8;
 	public byte[] GetResp_SAMIDNew() {
@@ -658,7 +674,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_SAMIDNew, scRespData_SAMIDNew + scRespData_SAMIDNew_Len);
 	}
 	
-	/* SAM Usage Control, 3 bytes, ·sSAM Card, SAM±±¨î°Ñ¼Æ */
+	/* SAM Usage Control, 3 bytes, æ–°SAM Card, SAMæ§åˆ¶åƒæ•¸ */
 	private static final int scRespData_SAMUsageControl = scRespData_SAMIDNew + scRespData_SAMIDNew_Len;
 	private static final int scRespData_SAMUsageControl_Len = 3;
 	public byte[] GetResp_SAMUsageControl() {
@@ -668,7 +684,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_SAMUsageControl, scRespData_SAMUsageControl + scRespData_SAMUsageControl_Len);
 	}
 	
-	/* SAM Admin KVN, 1 bytes, ·sSAM Card, SAM Admin Key Version Number */
+	/* SAM Admin KVN, 1 bytes, æ–°SAM Card, SAM Admin Key Version Number */
 	private static final int scRespData_SAMAdminKVN = scRespData_SAMUsageControl + scRespData_SAMUsageControl_Len;
 	private static final int scRespData_SAMAdminKVN_Len = 1;
 	public byte GetResp_SAMAdminKVN() {
@@ -678,7 +694,7 @@ public class PPR_Reset extends APDU {
 		return mRespond[scRespData_SAMAdminKVN];
 	}
 	
-	/* SAM Issuer KVN, 1 bytes, ·sSAM Card, SAM Issuer Key Version Number */
+	/* SAM Issuer KVN, 1 bytes, æ–°SAM Card, SAM Issuer Key Version Number */
 	private static final int scRespData_SAMIssuerKVN = scRespData_SAMAdminKVN + scRespData_SAMAdminKVN_Len;
 	private static final int scRespData_SAMIssuerKVN_Len = 1;
 	public byte GetResp_SAMIssuerKVN() {
@@ -688,10 +704,10 @@ public class PPR_Reset extends APDU {
 		return mRespond[scRespData_SAMIssuerKVN];
 	}
 	
-	/* ACL, 3 bytes, ·sSAM Card, Authorized Credit Limit(¥[­ÈÃB«×¹w³]­È), Unsigned and LSB First */
+	/* ACL, 3 bytes, æ–°SAM Card, Authorized Credit Limit(åŠ å€¼é¡åº¦é è¨­å€¼), Unsigned and LSB First */
 	private static final int scRespData_ACL = scRespData_SAMIssuerKVN + scRespData_SAMIssuerKVN_Len;
 	private static final int scRespData_ACL_Len = 3;
-	/* ACL, Authorized Credit Limit(¥[­ÈÃB«×¹w³]­È), Unsigned and LSB First, ·sSAM Card */
+	/* ACL, Authorized Credit Limit(åŠ å€¼é¡åº¦é è¨­å€¼), Unsigned and LSB First, æ–°SAM Card */
 	public byte[] GetResp_ACL() {
 		if (mRespond == null) {
 			return null;
@@ -699,7 +715,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_ACL, scRespData_ACL + scRespData_ACL_Len);
 	}
 	
-	/* Single Credit TXN AMT Limit, 3 bytes, ·sSAM Card, ¥[­È¥æ©öª÷ÃB­­ÃB, Unsigned and LSB First */
+	/* Single Credit TXN AMT Limit, 3 bytes, æ–°SAM Card, åŠ å€¼äº¤æ˜“é‡‘é¡é™é¡, Unsigned and LSB First */
 	private static final int scRespData_SingleCreditTXNAMTLimit = scRespData_ACL + scRespData_ACL_Len;
 	private static final int scRespData_SingleCreditTXNAMTLimit_Len = 3;
 	public byte[] GetResp_SingleCreditTXNAMTLimit() {
@@ -710,7 +726,7 @@ public class PPR_Reset extends APDU {
 				scRespData_SingleCreditTXNAMTLimit + scRespData_SingleCreditTXNAMTLimit_Len);
 	}
 	
-	/* ACB, 3 bytes, ·sSAM Card, Authorized Credit Balance(¥[­È±ÂÅvÃB«×), Unsigned and LSB First */
+	/* ACB, 3 bytes, æ–°SAM Card, Authorized Credit Balance(åŠ å€¼æˆæ¬Šé¡åº¦), Unsigned and LSB First */
 	private static final int scRespData_ACB = scRespData_SingleCreditTXNAMTLimit + scRespData_SingleCreditTXNAMTLimit_Len;
 	private static final int scRespData_ACB_Len = 3;
 	public byte[] GetResp_ACB() {
@@ -720,7 +736,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_ACB, scRespData_ACB + scRespData_ACB_Len);
 	}
 	
-	/* ACC, 3 bytes, ·sSAM Card, Authorized Credit Cumulative(¥[­È²Ö¿n¤w¥ÎÃB«×), Unsigned and LSB First */
+	/* ACC, 3 bytes, æ–°SAM Card, Authorized Credit Cumulative(åŠ å€¼ç´¯ç©å·²ç”¨é¡åº¦), Unsigned and LSB First */
 	private static final int scRespData_ACC = scRespData_ACB + scRespData_ACB_Len;
 	private static final int scRespData_ACC_Len = 3;
 	public byte[] GetResp_ACC() {
@@ -730,7 +746,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_ACC, scRespData_ACC + scRespData_ACC_Len);
 	}
 	
-	/* ACCC, 3 bytes, ·sSAM Card, Authorized Cancel Credit Cumulative(¨ú®ø¥[­È²Ö¿n¤w¥ÎÃB«×), Unsigned and LSB First */
+	/* ACCC, 3 bytes, æ–°SAM Card, Authorized Cancel Credit Cumulative(å–æ¶ˆåŠ å€¼ç´¯ç©å·²ç”¨é¡åº¦), Unsigned and LSB First */
 	private static final int scRespData_ACCC = scRespData_ACC + scRespData_ACC_Len;
 	private static final int scRespData_ACCC_Len = 3;
 	public byte[] GetResp_ACCC() {
@@ -740,19 +756,24 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_ACCC, scRespData_ACCC + scRespData_ACCC_Len);
 	}
 	
-	/* New Device ID, 6 bytes, ·sSAM Card, ·s³]³Æ½s¸¹, Unsigned and LSB First */
-	/* EasyCard: longªº«e¨â­Óbytes´N¬OSPID code */
+	/* New Device ID, 6 bytes, æ–°SAM Card, æ–°è¨­å‚™ç·¨è™Ÿ, Unsigned and LSB First */
+	/* EasyCard: longçš„å‰å…©å€‹byteså°±æ˜¯SPID code */
 	private static final int scRespData_NewDeviceID = scRespData_ACCC + scRespData_ACCC_Len;
 	private static final int scRespData_NewDeviceID_Len = 6;
 	public byte[] GetResp_NewDeviceID() {
 		if (mRespond == null) {
 			return null;
 		}
-		return Arrays.copyOfRange(mRespond, scRespData_NewDeviceID, 
-										scRespData_NewDeviceID + scRespData_NewDeviceID_Len);
+		byte[] result = Arrays.copyOfRange(mRespond, scRespData_NewDeviceID, 
+				scRespData_NewDeviceID + scRespData_NewDeviceID_Len); 
+		
+		logger.debug("getter newDeviceID:"+String.format("(%02X)(%02X)(%02X)(%02X)(%02X)(%02X)", result[0],result[1],result[2],result[3],result[4],result[5]));
+		logger.info("getter:"+Util.bcd2Ascii(result));
+		
+		return result;
 	}
 	
-	/* Tag List Table, 40 bytes, ·sSAM Card, Tag±±¨î°Ñ¼Æ */
+	/* Tag List Table, 40 bytes, æ–°SAM Card, Tagæ§åˆ¶åƒæ•¸ */
 	private static final int scRespData_TagListTable = scRespData_NewDeviceID + scRespData_NewDeviceID_Len;
 	private static final int scRespData_TagListTable_Len = 40;
 	public byte[] GetResp_TagListTable() {
@@ -763,7 +784,7 @@ public class PPR_Reset extends APDU {
 				scRespData_TagListTable + scRespData_TagListTable_Len);
 	}
 	
-	/* SAM Issuer Specific Data, 32 bytes, ·sSAM Card, SAM¦Û­q¸ê®Æ */
+	/* SAM Issuer Specific Data, 32 bytes, æ–°SAM Card, SAMè‡ªè¨‚è³‡æ–™ */
 	private static final int scRespData_SAMIssuerSpecificData = scRespData_TagListTable + scRespData_TagListTable_Len;
 	private static final int scRespData_SAMIssuerSpecificData_Len = 32;
 	public byte[] GetResp_SAMIssuerSpecificData() {
@@ -774,7 +795,7 @@ public class PPR_Reset extends APDU {
 				scRespData_SAMIssuerSpecificData + scRespData_SAMIssuerSpecificData_Len);
 	}
 	
-	/* STC, SAM TXN Counter, 4 bytes, ·sSAM Card, Unsigned and MSB First, P2=0x01®É¸É0x00 */
+	/* STC, SAM TXN Counter, 4 bytes, æ–°SAM Card, Unsigned and MSB First, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_STC = scRespData_SAMIssuerSpecificData + scRespData_SAMIssuerSpecificData_Len;
 	private static final int scRespData_STC_Len = 4;
 	public byte[] GetResp_STC() {
@@ -784,7 +805,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_STC, scRespData_STC + scRespData_STC_Len);
 	}
 	
-	/* RSAM, 8 btes, ·sSAM Card, SAM²£¥Í¤§Random Number, P2=0x01®É¸É0x00 */
+	/* RSAM, 8 btes, æ–°SAM Card, SAMç”¢ç”Ÿä¹‹Random Number, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_RSAM = scRespData_STC + scRespData_STC_Len;
 	private static final int scRespData_RSAM_Len = 8;
 	public byte[] GetResp_RSAM() {
@@ -794,7 +815,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_RSAM, scRespData_RSAM + scRespData_RSAM_Len);
 	}
 	
-	/* RHOST, 8 bytes, Reader, Host¤§Random Number (Reader²£¥Í), P2=0x01®É¸É0x00 */
+	/* RHOST, 8 bytes, Reader, Hostä¹‹Random Number (Readerç”¢ç”Ÿ), P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_RHOST = scRespData_RSAM + scRespData_RSAM_Len;
 	private static final int scRespData_RHOST_Len = 8;
 	public byte[] GetResp_RHOST() {
@@ -804,7 +825,7 @@ public class PPR_Reset extends APDU {
 		return Arrays.copyOfRange(mRespond, scRespData_RHOST, scRespData_RHOST + scRespData_RHOST_Len);
 	}
 	
-	/* SATOKEN, 16 bytes, ·sSAM Card, SAM Authentication Token, P2=0x01®É¸É0x00 */
+	/* SATOKEN, 16 bytes, æ–°SAM Card, SAM Authentication Token, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_SATOKEN = scRespData_RHOST + scRespData_RHOST_Len;
 	private static final int scRespData_SATOKEN_Len = 16;
 	public byte[] GetResp_SATOKEN() {
@@ -815,30 +836,30 @@ public class PPR_Reset extends APDU {
 	}
 	
 	/* 
-	 * PPR_SignOn°Ñ¼Æ³]©w, 1 byte, Reader (¾A¥Î©ó¦³SignOn¤§³]³Æ)
-	 * CPD Read Flag: Bit 0~1, ¤G¥NCPDÅª¨ú¤ÎÅçÃÒ³]©w
-	 * One Day Quota Write For Micro Payment: Bit 2~3, ¤pÃB®ø¶O¤é­­ÃB¼g¤J
-	 * SAM SignOnControl Flag: Bit 4~5, SAM¥dSignOn±±¨îºX¼Ğ
-	 * Check EV Flag For Mifare Only: Bit 6, ÀË¬d¾lÃBºX¼Ğ
-	 * Merchant Limit Use For Micro Payment: Bit 7, ¤pÃB®ø¶O³q¸ô­­¨î¨Ï¥ÎºX¼Ğ 
+	 * PPR_SignOnåƒæ•¸è¨­å®š, 1 byte, Reader (é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™)
+	 * CPD Read Flag: Bit 0~1, äºŒä»£CPDè®€å–åŠé©—è­‰è¨­å®š
+	 * One Day Quota Write For Micro Payment: Bit 2~3, å°é¡æ¶ˆè²»æ—¥é™é¡å¯«å…¥
+	 * SAM SignOnControl Flag: Bit 4~5, SAMå¡SignOnæ§åˆ¶æ——æ¨™
+	 * Check EV Flag For Mifare Only: Bit 6, æª¢æŸ¥é¤˜é¡æ——æ¨™
+	 * Merchant Limit Use For Micro Payment: Bit 7, å°é¡æ¶ˆè²»é€šè·¯é™åˆ¶ä½¿ç”¨æ——æ¨™ 
 	 */
 	private static final int scRespData_SignOnParams1 = scRespData_SATOKEN + scRespData_SATOKEN_Len;
 	private static final int scRespData_SignOnParams1_Len = 1;
 	
 	public enum CPDReadFlag {
-		NRHostNCReader,		// ¤£Åª¦^Host¥BReader¤£ÅçÃÒ
-		YRHostNCReader, 	// Åª¦^Host¥BReader¤£ÅçÃÒ
-		NRHostYCReader,		// ¤£Åª¦^Host¥BReader­nÅçÃÒ
-		YRHostYCReader		// Åª¦^Host¥BReader­nÅçÃÒ
+		NRHostNCReader,		// ä¸è®€å›Hostä¸”Readerä¸é©—è­‰
+		YRHostNCReader, 	// è®€å›Hostä¸”Readerä¸é©—è­‰
+		NRHostYCReader,		// ä¸è®€å›Hostä¸”Readerè¦é©—è­‰
+		YRHostYCReader		// è®€å›Hostä¸”Readerè¦é©—è­‰
 	};
 	
 	public enum SAMSignOnControlFlag {
-		NoSignOnForBoth,	// ¨â±iSAM¥d³£¤£¶·SignOn(Â÷½u)
-		SignOnForNewOnly,	// ¥uSignOn·sSAM¥d(²^¨OMifare®É)
-		SignOnForOldOnly,	// ¥uSignOnÂÂSAM¥d
-		SignOnForBoth		// ¨â±iSAM¥d³£­nSignOn
+		NoSignOnForBoth,	// å…©å¼µSAMå¡éƒ½ä¸é ˆSignOn(é›¢ç·š)
+		SignOnForNewOnly,	// åªSignOnæ–°SAMå¡(æ·˜æ±°Mifareæ™‚)
+		SignOnForOldOnly,	// åªSignOnèˆŠSAMå¡
+		SignOnForBoth		// å…©å¼µSAMå¡éƒ½è¦SignOn
 	};
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, CPD Read Flag: Bit 0~1, ¤G¥NCPDÅª¨ú¤ÎÅçÃÒ³]©w */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, CPD Read Flag: Bit 0~1, äºŒä»£CPDè®€å–åŠé©—è­‰è¨­å®š */
 	//public CPDReadFlag GetResp_CPDReadFlag() {
 	public byte GetResp_CPDReadFlag() {
 		if (mRespond == null) {
@@ -852,18 +873,18 @@ public class PPR_Reset extends APDU {
 		return b;
 		/*
 		switch (b) {	
-		case 1: // Åª¦^Host¥BReader¤£ÅçÃÒ
+		case 1: // è®€å›Hostä¸”Readerä¸é©—è­‰
 			return CPDReadFlag.YRHostNCReader;
-		case 2: // ¤£Åª¦^Host¥BReader­nÅçÃÒ
+		case 2: // ä¸è®€å›Hostä¸”Readerè¦é©—è­‰
 			return CPDReadFlag.NRHostYCReader;
-		case 3: // Åª¦^Host¥BReader­nÅçÃÒ
+		case 3: // è®€å›Hostä¸”Readerè¦é©—è­‰
 			return CPDReadFlag.YRHostYCReader;
-		default: // ¤£Åª¦^Host¥BReader¤£ÅçÃÒ
+		default: // ä¸è®€å›Hostä¸”Readerä¸é©—è­‰
 			return CPDReadFlag.NRHostNCReader;	
 		}*/
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, One Day Quota Write For Micro Payment: Bit 2~3, ¤pÃB®ø¶O¤é­­ÃB¼g¤J */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, One Day Quota Write For Micro Payment: Bit 2~3, å°é¡æ¶ˆè²»æ—¥é™é¡å¯«å…¥ */
 	//public OneDayQuotaWriteForMicroPayment GetResp_OneDayQuotaWriteForMicroPayment() {
 	public byte GetResp_OneDayQuotaWriteForMicroPayment() {
 		if (mRespond == null) {
@@ -874,19 +895,19 @@ public class PPR_Reset extends APDU {
 		return b;
 		/*
 		switch (b) {
-		case 1: // T=Mifare¼g¤J, T-CPU¤£¼g¤J
+		case 1: // T=Mifareå¯«å…¥, T-CPUä¸å¯«å…¥
 			return OneDayQuotaWriteForMicroPayment.WMNC;
-		case 2: // T=Mifare¤£¼g¤J, T-CPU¼g¤J
+		case 2: // T=Mifareä¸å¯«å…¥, T-CPUå¯«å…¥
 			return OneDayQuotaWriteForMicroPayment.NMWC;
-		case 3: // T=Mifare»PT-CPU³£¼g¤J
+		case 3: // T=Mifareèˆ‡T-CPUéƒ½å¯«å…¥
 			return OneDayQuotaWriteForMicroPayment.WNWC;
-		default: // T=Mifare»PT-CPU³£¤£¼g¤J
+		default: // T=Mifareèˆ‡T-CPUéƒ½ä¸å¯«å…¥
 			return OneDayQuotaWriteForMicroPayment.NMNC;	
 		}
 		*/
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, SAM SignOnControl Flag: Bit 4~5, SAM¥dSignOn±±¨îºX¼Ğ */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, SAM SignOnControl Flag: Bit 4~5, SAMå¡SignOnæ§åˆ¶æ——æ¨™ */
 	//public SAMSignOnControlFlag GetResp_SAMSignOnControlFlag() {
 	public byte GetResp_SAMSignOnControlFlag() {
 		if (mRespond == null) {
@@ -897,29 +918,33 @@ public class PPR_Reset extends APDU {
 		return b;
 		/*
 		switch (b) {
-		case 1: // ¥uSignOn·sSAM¥d(²^¨OMifare®É)
+		case 1: // åªSignOnæ–°SAMå¡(æ·˜æ±°Mifareæ™‚)
 			return SAMSignOnControlFlag.SignOnForNewOnly;
-		case 2: // ¥uSignOnÂÂSAM¥d
+		case 2: // åªSignOnèˆŠSAMå¡
 			return SAMSignOnControlFlag.SignOnForOldOnly;
-		case 3: // ¨â±iSAM¥d³£­nSignOn
+		case 3: // å…©å¼µSAMå¡éƒ½è¦SignOn
 			return SAMSignOnControlFlag.SignOnForBoth;
-		default: // ¨â±iSAM¥d³£¤£¶·SignOn(Â÷½u)
+		default: // å…©å¼µSAMå¡éƒ½ä¸é ˆSignOn(é›¢ç·š)
 			return SAMSignOnControlFlag.NoSignOnForBoth;	
 		}*/
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Check EV Flag For Mifare Only: Bit 6, ÀË¬d¾lÃBºX¼Ğ */
-	public boolean GetResp_CheckEVFlagForMifareOnly() {
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Check EV Flag For Mifare Only: Bit 6, æª¢æŸ¥é¤˜é¡æ——æ¨™ */
+	public byte GetResp_CheckEVFlagForMifareOnly() {
 		if (mRespond == null) {
-			return false;
+			return 0x00;
 		}
-		byte b = (byte) (mRespond[scRespData_SignOnParams1] & 0x40);
+		byte b = (byte) ((mRespond[scRespData_SignOnParams1] & 0x40) >> 6);
+		
+		return b;
+		/*
 		if (b == 0) {
 			return true;
 		} else {
 			return false;
-		}
+		}*/
 	}
+	/*
 	//add by bruce
 	public byte bGetResp_CheckEVFlagForMifareOnly() {
 		if (mRespond == null) {
@@ -931,19 +956,23 @@ public class PPR_Reset extends APDU {
 		} else {
 			return 0x00;
 		}
-	}
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Merchant Limit Use For Micro Payment: Bit 7, ¤pÃB®ø¶O³q¸ô­­¨î¨Ï¥ÎºX¼Ğ */
-	public boolean GetResp_MerchantLimitUseForMicroPayment() {
+	}*/
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Merchant Limit Use For Micro Payment: Bit 7, å°é¡æ¶ˆè²»é€šè·¯é™åˆ¶ä½¿ç”¨æ——æ¨™ */
+	public byte GetResp_MerchantLimitUseForMicroPayment() {
 		if (mRespond == null) {
-			return false;
+			return 0x00;
 		}
-		byte b = (byte) (mRespond[scRespData_SignOnParams1] & 0x80);
+		byte b = (byte) ((mRespond[scRespData_SignOnParams1] & 0x80) >> 7);
+		return b;
+		
+		/*
 		if (b == 0) {
-			return true; // ­­¨î¨Ï¥Î
+			return true; // é™åˆ¶ä½¿ç”¨
 		} else { 
-			return false; // ¤£­­¨î¨Ï¥Î
-		}
+			return false; // ä¸é™åˆ¶ä½¿ç”¨
+		}*/
 	}
+	/*
 	//add by bruce
 	public byte bGetResp_MerchantLimitUseForMicroPayment() {
 		if (mRespond == null) {
@@ -951,23 +980,23 @@ public class PPR_Reset extends APDU {
 		}
 		byte b = (byte) (mRespond[scRespData_SignOnParams1] & 0x80);
 		if (b == 0) {
-			return 0x00; // ­­¨î¨Ï¥Î
+			return 0x00; // é™åˆ¶ä½¿ç”¨
 		} else { 
-			return 0x01; // ¤£­­¨î¨Ï¥Î
+			return 0x01; // ä¸é™åˆ¶ä½¿ç”¨
 		}
-	}
+	}*/
 	/* 
-	 * PPR_SignOn°Ñ¼Æ³]©w, 1 byte, Reader (¾A¥Î©ó¦³SignOn¤§³]³Æ)
-	 * One Day Quota Flag For Micro Payment: Bit 0~1, ¤pÃB®ø¶O¤é­­ÃBºX¼Ğ
-	 * Once Quota Flag For Micro Payment: Bit 2, ¤pÃB®ø¶O¦¸­­ÃBºX¼Ğ
-	 * Check Debit Flag: Bit 3, ¦©­È¥æ©ö¦XªkÅçÃÒºX¼Ğ
-	 * Mifare Check Enable Flag: Bit 4, ¤G¥N¥dLevel 1
-	 * Pay On Behalf Flag: Bit 5, ¬O§_¤¹³\¥N¹Ô
-	 * RFU: Bit 6~7, «O¯d 
+	 * PPR_SignOnåƒæ•¸è¨­å®š, 1 byte, Reader (é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™)
+	 * One Day Quota Flag For Micro Payment: Bit 0~1, å°é¡æ¶ˆè²»æ—¥é™é¡æ——æ¨™
+	 * Once Quota Flag For Micro Payment: Bit 2, å°é¡æ¶ˆè²»æ¬¡é™é¡æ——æ¨™
+	 * Check Debit Flag: Bit 3, æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰æ——æ¨™
+	 * Mifare Check Enable Flag: Bit 4, äºŒä»£å¡Level 1
+	 * Pay On Behalf Flag: Bit 5, æ˜¯å¦å…è¨±ä»£å¢Š
+	 * RFU: Bit 6~7, ä¿ç•™ 
 	 */
 	private static final int scRespData_SignOnParams2 = scRespData_SignOnParams1 + scRespData_SignOnParams1_Len;
 	private static final int scRespData_SignOnParams2_Len = 1;
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, One Day Quota Flag For Micro Payment: Bit 0~1, ¤pÃB®ø¶O¤é­­ÃBºX¼Ğ */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, One Day Quota Flag For Micro Payment: Bit 0~1, å°é¡æ¶ˆè²»æ—¥é™é¡æ——æ¨™ */
 	//public OneDayQuotaFlagForMicroPayment GetResp_OneDayQuotaFlagForMicroPayment() {
 	public byte GetResp_OneDayQuotaFlagForMicroPayment() {
 		if (mRespond == null) {
@@ -978,42 +1007,51 @@ public class PPR_Reset extends APDU {
 		return b;
 		/*
 		switch (b) {
-		case 1: // ¤£ÀË¬d, ²Ö­p¤é­­ÃB
+		case 1: // ä¸æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 			return OneDayQuotaFlagForMicroPayment.NCYA;
-		case 2: // ÀË¬d, ¤£²Ö­p¤é­­ÃB
+		case 2: // æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
 			return OneDayQuotaFlagForMicroPayment.YCNA;
-		case 3: // ÀË¬d, ²Ö­p¤é­­ÃB
+		case 3: // æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 			return OneDayQuotaFlagForMicroPayment.YCYA;
-		default: // ¤£ÀË¬d, ¤£²Ö­p¤é­­ÃB
+		default: // ä¸æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
 			return OneDayQuotaFlagForMicroPayment.NCNA;	
 		}*/
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Once Quota Flag For Micro Payment: Bit 2, ¤pÃB®ø¶O¦¸­­ÃBºX¼Ğ */
-	public boolean GetResp_OnceQuotaFlagForMicroPayment() {
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Once Quota Flag For Micro Payment: Bit 2, å°é¡æ¶ˆè²»æ¬¡é™é¡æ——æ¨™ */
+	public byte GetResp_OnceQuotaFlagForMicroPayment() {
 		if (mRespond == null) {
-			return false;
+			return 0x00;
 		}  
-		byte b = (byte) (mRespond[scRespData_SignOnParams2] & 0x04);
+		
+		
+		byte b = (byte) ((mRespond[scRespData_SignOnParams2] & 0x04) >> 2);
+		
+		logger.debug("getter:orig:"+String.format("%02X", mRespond[scRespData_SignOnParams2])+",bit:"+String.format("%02X", b));
+		return b;
+		/*
 		if (b == 0) {
-			return false; // ¤£­­¨î¦¸­­ÃB
+			return false; // ä¸é™åˆ¶æ¬¡é™é¡
 		} else {
-			return true; // ­­¨î¦¸­­ÃB
-		}
+			return true; // é™åˆ¶æ¬¡é™é¡
+		}*/
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Check Debit Flag: Bit 3, ¦©­È¥æ©ö¦XªkÅçÃÒºX¼Ğ */
-	public boolean GetResp_CheckDebitFlag() {
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Check Debit Flag: Bit 3, æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰æ——æ¨™ */
+	public byte GetResp_CheckDebitFlag() {
 		if (mRespond == null) {
-			return false;
+			return 0x00;
 		}  
-		byte b = (byte) (mRespond[scRespData_SignOnParams2] & 0x08);
+		byte b = (byte) ((mRespond[scRespData_SignOnParams2] & 0x08) >> 3);
+		return b;
+		/*
 		if (b == 0) {
-			return false; // ¤£­­¨î¦©­È¥æ©ö¦XªkÅçÃÒª÷ÃB
+			return false; // ä¸é™åˆ¶æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰é‡‘é¡
 		} else {
-			return true; // ­­¨î¦©­È¥æ©ö¦XªkÅçÃÒª÷ÃB
-		}
+			return true; // é™åˆ¶æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰é‡‘é¡
+		}*/
 	}
+	/*
 	//add by bruce
 	public byte bGetResp_CheckDebitFlag() {
 		if (mRespond == null) {
@@ -1021,38 +1059,40 @@ public class PPR_Reset extends APDU {
 		}  
 		byte b = (byte) (mRespond[scRespData_SignOnParams2] & 0x08);
 		if (b == 0) {
-			return 0x00; // ¤£­­¨î¦©­È¥æ©ö¦XªkÅçÃÒª÷ÃB
+			return 0x00; // ä¸é™åˆ¶æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰é‡‘é¡
 		} else {
-			return 0x01; // ­­¨î¦©­È¥æ©ö¦XªkÅçÃÒª÷ÃB
+			return 0x01; // é™åˆ¶æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰é‡‘é¡
 		}
-	}
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Mifare Check Enable Flag: Bit 4, ¤G¥N¥dLevel 1 */
-	public boolean GetResp_MifareCheckEnableFlag() {
+	}*/
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Mifare Check Enable Flag: Bit 4, äºŒä»£å¡Level 1 */
+	public byte GetResp_MifareCheckEnableFlag() {
 		if (mRespond == null) {
-			return false;
+			return 0x00;
 		}  
-		byte b = (byte) (mRespond[scRespData_SignOnParams2] & 0x10);
+		byte b = (byte) ((mRespond[scRespData_SignOnParams2] & 0x10) >> 4);
+		return b;
+		/*
 		if (b == 0) {
-			return false; // ¤£±Ò°ÊMifare¾lÃBÀË¬d
+			return false; // ä¸å•Ÿå‹•Mifareé¤˜é¡æª¢æŸ¥
 		} else {
-			return true; // ±Ò°ÊMifare¾lÃBÀË¬d
-		}
+			return true; // å•Ÿå‹•Mifareé¤˜é¡æª¢æŸ¥
+		}*/
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Pay On Behalf Flag: Bit 5, ¬O§_¤¹³\¥N¹Ô */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Pay On Behalf Flag: Bit 5, æ˜¯å¦å…è¨±ä»£å¢Š */
 	public boolean GetResp_PayOnBehalfFlag() {
 		if (mRespond == null) {
 			return false;
 		}  
 		byte b = (byte) (mRespond[scRespData_SignOnParams2] & 0x20);
 		if (b == 0) {
-			return false; // ¤£¤¹³\¥N¹Ô
+			return false; // ä¸å…è¨±ä»£å¢Š
 		} else {
-			return true; // ¤¹³\¥N¹Ô¤@¦¸
+			return true; // å…è¨±ä»£å¢Šä¸€æ¬¡
 		}
 	}
 	
-	/* One Day Quota For Micro Payment, 2 bytes, Reader (¾A¥Î©ó¦³SignOn¤§³]³Æ), ¤pÃB®ø¶O¤é­­ÃBÃB«×, Unsigned and LSB First */
+	/* One Day Quota For Micro Payment, 2 bytes, Reader (é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™), å°é¡æ¶ˆè²»æ—¥é™é¡é¡åº¦, Unsigned and LSB First */
 	private static final int scRespData_OneDayQuotaForMicroPayment = scRespData_SignOnParams2 + scRespData_SignOnParams2_Len;
 	private static final int scRespData_OneDayQuotaForMicroPayment_Len = 2;
 	public byte[] GetResp_OneDayQuotaForMicroPayment() {
@@ -1063,7 +1103,7 @@ public class PPR_Reset extends APDU {
 				scRespData_OneDayQuotaForMicroPayment + scRespData_OneDayQuotaForMicroPayment_Len);
 	}
 	
-	/* Once Quota For Micro Payment, 2 bytes, Reader (¾A¥Î©ó¦³SignOn¤§³]³Æ), ¤pÃB®ø¶O¦¸­­ÃBÃB«×, Unsigned and LSB First */
+	/* Once Quota For Micro Payment, 2 bytes, Reader (é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™), å°é¡æ¶ˆè²»æ¬¡é™é¡é¡åº¦, Unsigned and LSB First */
 	private static final int scRespData_OnceQuotaForMicroPayment = scRespData_OneDayQuotaForMicroPayment + scRespData_OneDayQuotaForMicroPayment_Len;
 	private static final int scRespData_OnceQuotaForMicroPayment_Len = 2;
 	public byte[] GetResp_OnceQuotaForMicroPayment() {
@@ -1074,7 +1114,7 @@ public class PPR_Reset extends APDU {
 				scRespData_OnceQuotaForMicroPayment + scRespData_OnceQuotaForMicroPayment_Len);
 	}
 	
-	/* Check Debit Value, 2 bytes, Reader (¾A¥Î©ó¦³SignOn¤§³]³Æ), ¦©­È¥æ©ö¦XªkÅçÃÒª÷ÃB, Unsigned and LSB First */
+	/* Check Debit Value, 2 bytes, Reader (é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™), æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰é‡‘é¡, Unsigned and LSB First */
 	private static final int scRespData_CheckDebitValue = scRespData_OnceQuotaForMicroPayment + scRespData_OnceQuotaForMicroPayment_Len;
 	private static final int scRespData_CheckDebitValue_Len = 2;
 	public byte[] GetResp_CheckDebitValue() {
@@ -1085,20 +1125,23 @@ public class PPR_Reset extends APDU {
 				scRespData_CheckDebitValue + scRespData_CheckDebitValue_Len);
 	}
 	
-	/* Add Quota Flag, 1 byte, Reader (¾A¥Î©óÂÂªºÃB«×±±ºŞ), ¥[­ÈÃB«×±±ºŞºX¼Ğ */
+	/* Add Quota Flag, 1 byte, Reader (é©ç”¨æ–¼èˆŠçš„é¡åº¦æ§ç®¡), åŠ å€¼é¡åº¦æ§ç®¡æ——æ¨™ */
 	private static final int scRespData_AddQuotaFlag = scRespData_CheckDebitValue + scRespData_CheckDebitValue_Len;
 	private static final int scRespData_AddQuotaFlag_Len = 1;
-	public boolean GetResp_AddQuotaFlag() {
+	public byte GetResp_AddQuotaFlag() {
 		if (mRespond == null) {
-			return false;
+			return 0x00;
 		}
-		
+		return mRespond[scRespData_AddQuotaFlag];
+		/*
 		if (mRespond[scRespData_AddQuotaFlag] == 0) {
-			return false; // ¤£ÀË¬dÃB«×
+			return false; // ä¸æª¢æŸ¥é¡åº¦
 		} else {
-			return true; // ÀË¬dÃB«×
-		}
+			return true; // æª¢æŸ¥é¡åº¦
+		}*/
 	}
+	
+	/*
 	//add by bruce
 	public byte bGetResp_AddQuotaFlag() {
 		if (mRespond == null) {
@@ -1106,12 +1149,13 @@ public class PPR_Reset extends APDU {
 		}
 		
 		if (mRespond[scRespData_AddQuotaFlag] == 0) {
-			return 0x00; // ¤£ÀË¬dÃB«×
+			return 0x00; // ä¸æª¢æŸ¥é¡åº¦
 		} else {
-			return 0x01; // ÀË¬dÃB«×
+			return 0x01; // æª¢æŸ¥é¡åº¦
 		}
 	}
-	/* Add Quota, 3 bytes, Reader (¾A¥Î©óÂÂªºÃB«×±±ºŞ), ¥[­ÈÃB«×, Unsigned and LSB First */
+	*/
+	/* Add Quota, 3 bytes, Reader (é©ç”¨æ–¼èˆŠçš„é¡åº¦æ§ç®¡), åŠ å€¼é¡åº¦, Unsigned and LSB First */
 	private static final int scRespData_AddQuota = scRespData_AddQuotaFlag + scRespData_AddQuotaFlag_Len;
 	private static final int scRespData_AddQuota_Len = 3;
 	public byte[] GetResp_AddQuota() {
@@ -1122,7 +1166,7 @@ public class PPR_Reset extends APDU {
 				scRespData_AddQuota + scRespData_AddQuota_Len);
 	}
 	
-	/* The Remainder of Add Quota, 3 bytes, Reader (¾A¥Î©óÂÂªºÃB«×±±ºŞ), ³Ñ¾l¥[­ÈÃB«×, Unsigned and LSB First */
+	/* The Remainder of Add Quota, 3 bytes, Reader (é©ç”¨æ–¼èˆŠçš„é¡åº¦æ§ç®¡), å‰©é¤˜åŠ å€¼é¡åº¦, Unsigned and LSB First */
 	private static final int scRespData_RemainderofAddQuota = scRespData_AddQuota + scRespData_AddQuota_Len;
 	private static final int scRespData_RemainderofAddQuota_Len = 3;
 	public byte[] GetResp_RemainderofAddQuota() {
@@ -1133,7 +1177,7 @@ public class PPR_Reset extends APDU {
 				scRespData_RemainderofAddQuota + scRespData_RemainderofAddQuota_Len);
 	}
 	
-	/* Cancel Credit Quota, 3 bytes, Reader (¾A¥Î©óÂÂªºÃB«×±±ºŞ), ¨ú®ø¥[­È²Ö­pÃB«×, Unsigned and LSB First */
+	/* Cancel Credit Quota, 3 bytes, Reader (é©ç”¨æ–¼èˆŠçš„é¡åº¦æ§ç®¡), å–æ¶ˆåŠ å€¼ç´¯è¨ˆé¡åº¦, Unsigned and LSB First */
 	private static final int scRespData_CancelCreditQuota = scRespData_RemainderofAddQuota + scRespData_RemainderofAddQuota_Len;
 	private static final int scRespData_CancelCreditQuota_Len = 3;
 	public byte[] GetResp_CancelCreditQuota() {
@@ -1144,7 +1188,7 @@ public class PPR_Reset extends APDU {
 				scRespData_CancelCreditQuota + scRespData_CancelCreditQuota_Len);
 	}
 	
-	/* deMAC Parameter, 8 bytes, Reader (¾A¥Î©óÂÂªºSAM Card), ¬Y¨Ç¶W°ÓDongle deMAC»İ­n¥Î¨ì¦¹°Ñ¼Æ, P2=0x01®É¸É0x00 */
+	/* deMAC Parameter, 8 bytes, Reader (é©ç”¨æ–¼èˆŠçš„SAM Card), æŸäº›è¶…å•†Dongle deMACéœ€è¦ç”¨åˆ°æ­¤åƒæ•¸, P2=0x01æ™‚è£œ0x00 */
 	private static final int scRespData_deMACParameter = scRespData_CancelCreditQuota + scRespData_CancelCreditQuota_Len;
 	private static final int scRespData_deMACParameter_Len = 8;
 	public byte[] GetResp_deMACParameter() {
@@ -1155,7 +1199,7 @@ public class PPR_Reset extends APDU {
 				scRespData_deMACParameter + scRespData_deMACParameter_Len);		
 	}
 	
-	/* Last TXN Date Time, 4 bytes, Reader, ³Ì«á¤@¦¸Mutual Authentication¦¨¥\®É¶¡(UnixDateTime) */
+	/* Last TXN Date Time, 4 bytes, Reader, æœ€å¾Œä¸€æ¬¡Mutual AuthenticationæˆåŠŸæ™‚é–“(UnixDateTime) */
 	private static final int scRespData_LastTXNDateTime = scRespData_deMACParameter + scRespData_deMACParameter_Len;
 	private static final int scRespData_LastTXNDateTime_Len = 4;
 	public int GetResp_LastTXNDateTime() {
@@ -1173,9 +1217,9 @@ public class PPR_Reset extends APDU {
 				scRespData_LastTXNDateTime +scRespData_LastTXNDateTime_Len);
 	
 	}
-	/* Previous New Device ID, 6 bytes, Reader, ·s³]³Æ½s¸¹, 
-	 * ·sSAM Card SignOn¸Éconfirm¤§¥Î, §t¦¨¥\©Î¥¢±Ñ, 
-	 * Unsigned and LSB First, P2=0x01®É¸É0x00 
+	/* Previous New Device ID, 6 bytes, Reader, æ–°è¨­å‚™ç·¨è™Ÿ, 
+	 * æ–°SAM Card SignOnè£œconfirmä¹‹ç”¨, å«æˆåŠŸæˆ–å¤±æ•—, 
+	 * Unsigned and LSB First, P2=0x01æ™‚è£œ0x00 
 	 */
 	private static final int scRespData_PreviousNewDeviceID = scRespData_LastTXNDateTime + scRespData_LastTXNDateTime_Len;
 	private static final int scRespData_PreviousNewDeviceID_Len = 6;
@@ -1188,8 +1232,8 @@ public class PPR_Reset extends APDU {
 	}
 	
 	/* Previous STC, 4 bytes, Reader, SAM TXN Counter, 
-	 * ·sSAM Card SignOn¸Éconfirm¤§¥Î, §t¦¨¥\©Î¥¢±Ñ, 
-	 * Unsigned and MSB First, P2=0x01®É¸É0x00 
+	 * æ–°SAM Card SignOnè£œconfirmä¹‹ç”¨, å«æˆåŠŸæˆ–å¤±æ•—, 
+	 * Unsigned and MSB First, P2=0x01æ™‚è£œ0x00 
 	 */
 	private static final int scRespData_PreviousSTC = scRespData_PreviousNewDeviceID + scRespData_PreviousNewDeviceID_Len;
 	private static final int scRespData_PreviousSTC_Len = 4;
@@ -1201,9 +1245,9 @@ public class PPR_Reset extends APDU {
 				scRespData_PreviousSTC + scRespData_PreviousSTC_Len);
 	}
 	
-	/* Previous TXN Date Time, 4 bytes, Reader ¥æ©ö¤é´Á®É¶¡, 
-	 * ·sSAM Card SignOn¸Éconfirm¤§¥Î, §t¦¨¥\©Î¥¢±Ñ, 
-	 * UnixDateTime, Unsigned and LSB First, P2=0x01®É¸É0x00 
+	/* Previous TXN Date Time, 4 bytes, Reader äº¤æ˜“æ—¥æœŸæ™‚é–“, 
+	 * æ–°SAM Card SignOnè£œconfirmä¹‹ç”¨, å«æˆåŠŸæˆ–å¤±æ•—, 
+	 * UnixDateTime, Unsigned and LSB First, P2=0x01æ™‚è£œ0x00 
 	 */
 	private static final int scRespData_PreviousTXNDateTime = scRespData_PreviousSTC + scRespData_PreviousSTC_Len;
 	private static final int scRespData_PreviousTXNDateTime_Len = 4;
@@ -1215,9 +1259,9 @@ public class PPR_Reset extends APDU {
 				scRespData_PreviousTXNDateTime + scRespData_PreviousTXNDateTime_Len);
 	}
 	
-	/* Previous Credit Balance Change Flag, 1 byte, Reader, ¥[­È±ÂÅvÃB«×(ACB)ÅÜ§óºX¼Ğ, 
-	 * ·sSAM Card SignOn¸Éconfirm¤§¥Î, §t¦¨¥\©Î¥¢±Ñ, 
-	 * UnixDateTime, Unsigned and LSB First, P2=0x01®É¸É0x00 
+	/* Previous Credit Balance Change Flag, 1 byte, Reader, åŠ å€¼æˆæ¬Šé¡åº¦(ACB)è®Šæ›´æ——æ¨™, 
+	 * æ–°SAM Card SignOnè£œconfirmä¹‹ç”¨, å«æˆåŠŸæˆ–å¤±æ•—, 
+	 * UnixDateTime, Unsigned and LSB First, P2=0x01æ™‚è£œ0x00 
 	 */
 	private static final int scRespData_PreviousCreditBalanceChangeFlag = scRespData_PreviousTXNDateTime + scRespData_PreviousTXNDateTime_Len;
 	private static final int scRespData_PreviousCreditBalanceChangeFlag_Len = 1;
@@ -1227,9 +1271,9 @@ public class PPR_Reset extends APDU {
 		}
 		
 		if (mRespond[scRespData_PreviousCreditBalanceChangeFlag] == 0) {
-			return false; // ¥¼ÅÜ§ó
+			return false; // æœªè®Šæ›´
 		} else {
-			return true; // ÃB«×¦³ÅÜ§ó
+			return true; // é¡åº¦æœ‰è®Šæ›´
 		}
 	}
 	//add by bruce
@@ -1239,14 +1283,14 @@ public class PPR_Reset extends APDU {
 		}
 		
 		if (mRespond[scRespData_PreviousCreditBalanceChangeFlag] == 0) {
-			return 0x00; // ¥¼ÅÜ§ó
+			return 0x00; // æœªè®Šæ›´
 		} else {
-			return 0x01; // ÃB«×¦³ÅÜ§ó
+			return 0x01; // é¡åº¦æœ‰è®Šæ›´
 		}
 	}
 	/* Previous Confirm Code, 2 bytes, Reader, Status Code1 + Status Code2, 
-	 * ·sSAM Card SignOn¸Éconfirm¤§¥Î, §t¦¨¥\©Î¥¢±Ñ, 
-	 * P2=0x01®É¸É0x00 
+	 * æ–°SAM Card SignOnè£œconfirmä¹‹ç”¨, å«æˆåŠŸæˆ–å¤±æ•—, 
+	 * P2=0x01æ™‚è£œ0x00 
 	 */
 	private static final int scRespData_PreviousConfirmCode = scRespData_PreviousCreditBalanceChangeFlag + scRespData_PreviousCreditBalanceChangeFlag_Len;
 	private static final int scRespData_PreviousConfirmCode_Len = 2;
@@ -1259,8 +1303,8 @@ public class PPR_Reset extends APDU {
 	}
 
 	/* Previous CACrypto, 16 bytes, Reader, Credit Authentication Cryptogram, 
-	 * ·sSAM Card SignOn¸Éconfirm¤§¥Î, §t¦¨¥\©Î¥¢±Ñ, 
-	 * ÃB«×ÅÜ§ó¥¢±Ñ©Î¥¼ÅÜ§ó©ÎP2=0x01®É¸É0x00 
+	 * æ–°SAM Card SignOnè£œconfirmä¹‹ç”¨, å«æˆåŠŸæˆ–å¤±æ•—, 
+	 * é¡åº¦è®Šæ›´å¤±æ•—æˆ–æœªè®Šæ›´æˆ–P2=0x01æ™‚è£œ0x00 
 	 */
 	private static final int scRespData_PreviousCACrypto = scRespData_PreviousConfirmCode + scRespData_PreviousConfirmCode_Len;
 	private static final int scRespData_PreviousCACrypto_Len = 16; 
@@ -1303,12 +1347,14 @@ public class PPR_Reset extends APDU {
 		Resp_SW1 = mRespond[scRespDataOffset + dataLength - 2];
 		Resp_SW2 = mRespond[scRespDataOffset + dataLength + 1 - 2];
 		
+		
 		return true;
 	}
 
 	@Override
-	protected void debugResponseData() {
+	public void debugResponseData() {
 		// TODO Auto-generated method stub
+		logger.debug("pprReset recv:" + Util.hex2StringLog(mRespond));
 		
 	}
 

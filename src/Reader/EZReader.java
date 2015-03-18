@@ -5,34 +5,32 @@ package Reader;
 
 import org.apache.log4j.Logger;
 
-
-
-import Reader.PPR_Reset;
-
-
-import Utilities.*;
+import ErrorMessage.ApiRespCode;
+import ErrorMessage.IRespCode;
+import ErrorMessage.ReaderRespCode;
 
 
 public class EZReader{
 	
 	static Logger logger = Logger.getLogger(EZReader.class);
 
-    private RecvSender recvSender=null;
+    private IRecvSender recvSender=null;
     
     
  	
-    public EZReader(RecvSender rs){
+    public EZReader(IRecvSender rs){
     	logger.info("Start");
     	
     	recvSender = rs;
     	logger.info("End");
     }
     
-    public int exeCommand(APDU command)
+    public IRespCode exeCommand(APDU command)
     {
     	logger.info("Start");
     	
-    	int result = RespCode.SUCCESS.getId();
+    	IRespCode result;
+    	int statusCode;
     	
     	byte[] sendBuffer;
     	byte[] recvBuffer = null;
@@ -41,35 +39,41 @@ public class EZReader{
     		sendBuffer = command.GetRequest();    	
     		
     		
-    		recvBuffer = recvSender.apduSendRecv(sendBuffer);
+    		recvBuffer = recvSender.sendRecv(sendBuffer);
     		if(recvBuffer==null) {
     			logger.error("recvBuffer is NULL");
-    			return RespCode.ERROR.getId();
+    			return ApiRespCode.READER_NO_RESPONSE;
     		}
     		
     		if(command.SetRespond(recvBuffer)==false)
     		{
     			logger.error("command: "+command.getClass().getName()+",setRespond fail");
-    			return RespCode.ERROR.getId();
+    			return ApiRespCode.ERROR;
     		}
     		
-    		if((result = command.GetRespCode()) != 0x9000)    		
-    			logger.error("APDU respCode:"+String.format("%04X", result));
-    			
+    		if((statusCode = command.GetRespCode()) != 0x9000)
+    		{
+    			String hexCode = String.format("%04X", statusCode);
+    			logger.error("APDU respCode:"+hexCode);
+    			result = ApiRespCode.fromCode(hexCode, ReaderRespCode.values());
+    		}    		
+    		else
+    			result = ApiRespCode.SUCCESS;
     		
+    		//for debug
+    		command.debugResponseData();
     		
     	}
     	catch(Exception e)
     	{
     		logger.error("Exception: "+ e.getMessage());
-    		return RespCode.ERROR.getId();
+    		return ApiRespCode.ERROR;
     	}
     	
 		return result;
     	
     	
     }
-
 }
 
 

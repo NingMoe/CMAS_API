@@ -257,7 +257,7 @@ public class Util {
 		return new String(bytes);
 	}
 			
-	// binary data, ±Nµ¹¤@­Óbyte unpack¬°00-FF¤§2bytes ASCII¦r¤¸, 1 data element = 2 bytes
+	// binary data, ï¿½Nï¿½ï¿½ï¿½@ï¿½ï¿½byte unpackï¿½ï¿½00-FFï¿½ï¿½2bytes ASCIIï¿½rï¿½ï¿½, 1 data element = 2 bytes
 	public static String sGetAttr_b(byte[] bytes) {
 		String s = "";
 		for (int i = 0; i < bytes.length; i ++) {
@@ -277,7 +277,7 @@ public class Util {
 		return s;
 	}
 	
-	// binary data, ±Nµ¹¤@­Óbyte unpack¬°00-FF¤§2bytes ASCII¦r¤¸, 1 data element = 2 bytes
+	// binary data, ï¿½Nï¿½ï¿½ï¿½@ï¿½ï¿½byte unpackï¿½ï¿½00-FFï¿½ï¿½2bytes ASCIIï¿½rï¿½ï¿½, 1 data element = 2 bytes
 	public static String sGetAttr_b(byte b) {
 		String s = "";
 		char c1 = (char) ('0' + ((b & 0xF0) >> 4));
@@ -297,31 +297,7 @@ public class Util {
 		return new String(bytes);
 	}
 
-	public static byte[] sGetBinaryfromString(String s) {
-		if (s == null || s.length() == 0 || s.length() % 2 != 0) {
-			return null;
-		}
-		byte[] b = new byte[s.length() / 2];
-		for (int i = 0; i < s.length(); i += 2) {
-			byte b1 = c2b(s.charAt(i));
-			byte b2 = c2b(s.charAt(i + 1));
-			b[i / 2] = (byte) ((b1 << 4) & 0xF0);
-			b[i / 2] += (byte) (b2 & 0x0F);
-		}
-		return b;
-	}
 	
-	private static byte c2b(char c) {
-		if (c >= '0' && c <= '9') {
-			return (byte) (c - '0');
-		} else if (c >= 'A' && c <= 'F') {
-			return (byte) (c - 0x37);
-		} else if (c >= 'a' && c <= 'f') {
-			return (byte) (c - 0x57);
-		} else {
-			return 0;
-		}
-	}
 	
 	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -390,4 +366,55 @@ public class Util {
 		
 		return true;
 	}
+	public static String hex2StringLog(byte[] data)
+	{
+		StringBuilder sb = new StringBuilder();
+		   
+		for(byte b: data)
+		      sb.append("("+String.format("%02x", b & 0xff)+")");
+		   
+		return sb.toString();	
+	}
+	
+	public static byte[] ascii2Bcd(String s) {
+		if (s == null || s.length() == 0 || s.length() % 2 != 0) {
+			return null;
+		}
+		byte[] b = new byte[s.length() / 2];
+		for (int i = 0; i < s.length(); i += 2) {
+			byte b1 = c2b(s.charAt(i));
+			byte b2 = c2b(s.charAt(i + 1));
+			b[i / 2] = (byte) ((b1 << 4) & 0xF0);
+			b[i / 2] += (byte) (b2 & 0x0F);
+		}
+		return b;
+	}
+	
+	private static byte c2b(char c) {
+		if (c >= '0' && c <= '9') {
+			return (byte) (c - '0');
+		} else if (c >= 'A' && c <= 'F') {
+			return (byte) (c - 0x37);
+		} else if (c >= 'a' && c <= 'f') {
+			return (byte) (c - 0x57);
+		} else {
+			return 0;
+		}
+	}
+	
+
+	public static String bcd2Ascii(byte bcd) {
+		
+		return String.format("%02X", bcd);
+	}
+	
+	public static String bcd2Ascii(byte[] bcd) {
+
+		StringBuffer sb = new StringBuffer();	
+		for (int i = 0; i < bcd.length; i++) {		
+			sb.append(bcd2Ascii(bcd[i]));
+		}
+		return sb.toString();
+	}
+	
 }

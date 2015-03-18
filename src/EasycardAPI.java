@@ -14,14 +14,13 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import Process.Process;
-import Process.Process_Signon;
-import Reader.RecvSender;
 import TransData.BatchInfo;
 import TransData.TMINFO;
 import CMAS.CMAS;
 import CMAS.CMASTAG;
 import CMAS.SSLClient;
 import CMAS.TransFormat;
+import ErrorMessage.IRespCode;
 
 
 
@@ -31,32 +30,30 @@ public class EasycardAPI {
 	
 	
 	
-	RecvSender rs = null;
+	
 	public EasycardAPI() //throws FileNotFoundException, IOException
 	{
+		logger.info("Start");
 		apiInit();
-		if(rs==null)
-			rs = new RecvSender();		
+		logger.info("End");
 	}
 	
-	public EasycardAPI(RecvSender posRs)
-	{
-		apiInit();
-		rs = posRs;
-	}
-	
-	private boolean apiInit(){
+	private static boolean apiInit(){
 		
 		try{
 			//setting log config properties
 			Properties logp = new Properties();	
-		//	logp.load(EasycardAPI.class.getResourceAsStream("log4j.properties"));
-			//logp.load(new FileInputStream(EasycardAPI.class.getResource("/").getPath() +  "Config/log4.properties"));
-			String path= this.getClass().getResource("/").getPath()+ Config.PATH.Config+ "log4j.properties";
+			//logp.load(EasycardAPI.class.getResourceAsStream("../config/log4j.properties"));
+			logp.load(EasycardAPI.class.getClassLoader().getResourceAsStream("log4j.properties"));
+
 			
-			logp.load(new FileInputStream(path));
-			PropertyConfigurator.configure(logp);
-			logger.info("********** App Start **********");
+			
+			//logp.load(new FileInputStream(EasycardAPI.class.getResource("/").getPath() +  "Config/log4.properties"));
+			//String path= this.getClass().getResource("/").getPath()+ Config.PATH.Config+ "log4j.properties";
+			
+			//logp.load(new FileInputStream(path));
+			//PropertyConfigurator.configure(logp);
+			
 			
 		}catch(Exception e){
 			
@@ -72,14 +69,18 @@ public class EasycardAPI {
 	{	
 		try{
 		
-			//reset
-			Process_Signon  p = new Process_Signon();
-			TMINFO tm=new TMINFO();
-			p.Start(tm);
-						
-	
-		}catch(IOException e){
-		logger.error(e.getMessage());	
+			logger.info("Start");
+			
+			IRespCode result;
+			Process process = new Process();
+			result = process.doSignon();
+			
+			logger.info("Do_Signon() result:"+result.getId()+":"+result.getMsg()); 
+			
+			logger.info("End");
+		}catch(Exception e){
+			e.getStackTrace();		
+			logger.error(e.getMessage());	
 		}
 	}
 	
@@ -88,7 +89,7 @@ public class EasycardAPI {
 		try{
 		
 			logger.info("Start");		
-			Process process = new Process(rs);
+			//Process process = new Process(rs);
 			logger.info("End");
 		
 	
@@ -99,18 +100,12 @@ public class EasycardAPI {
 
 	public  static void main(String args[]) {	
 	     
-		logger.info("Start");
-		System.out.print("Start"); 
-	 	Properties logp = new Properties();	
-		//	logp.load(EasycardAPI.class.getResourceAsStream("log4j.properties"));
-			//logp.load(new FileInputStream(EasycardAPI.class.getResource("/").getPath() +  "Config/log4.properties"));
-			String path= EasycardAPI.class.getResource("/").getPath()+ Config.PATH.Config+ "log4j.properties";
+		logger.info("********** App Start **********");
 			
-			logp.load(new FileInputStream(path));
-			PropertyConfigurator.configure(logp);
-			logger.info("********** App Start **********");
-			
-	     Do_Signon();
+		
+		
+		apiInit();
+	    Do_Signon();
   
 	     logger.info("End");
 	}

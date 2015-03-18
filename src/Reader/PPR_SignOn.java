@@ -2,14 +2,15 @@ package Reader;
 
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
 
-
-import Utilities.DataFormat;
 import Utilities.Util;
 
 
 public class PPR_SignOn extends APDU {
-public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥d¤¤°µ»{ÃÒ";
+	
+	static Logger logger = Logger.getLogger(PPR_SignOn.class);
+	public static final String scDescription = "å°‡0810ç«¯æœ«é–‹æ©Ÿè¨Šæ¯é€éReaderå‚³å…¥SAMå¡ä¸­åšèªè­‰";
 	
 	private static PPR_SignOn sThis = null;
 	
@@ -59,7 +60,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		mRequest[scReqLength - 1] = 0; // EDC
 	}
 	
-	/* H-TAC, 8 bytes, Host, Host»{ÃÒ½X, ¥Î©óÂÂSAM Card, T6401 */
+	/* H-TAC, 8 bytes, Host, Hostèªè­‰ç¢¼, ç”¨æ–¼èˆŠSAM Card, T6401 */
 	private static final int scReqData_H_TAC = scReqDataOffset + 0;
 	private static final int scReqData_H_TAC_Len = 8;
  	public boolean SetReq_H_TAC(String htac) { 
@@ -67,10 +68,10 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
  		
- 		//byte[] b = Util.sGetBinaryfromString(htac);
+ 		//byte[] b = Util.ascii2Bcd(htac);
  		
  	//	byte[] b = DataFormat.hexStringToByteArray(htac);
- 		byte[] b= Util.sGetBinaryfromString(htac);
+ 		byte[] b= Util.ascii2Bcd(htac);
  		if (b == null) {
  			return false;
  		}
@@ -80,7 +81,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* HAToken, 16 bytes, Host, Host Authentication Token, ¥Î©ó·sSAM Card, T6409 */
+	/* HAToken, 16 bytes, Host, Host Authentication Token, ç”¨æ–¼æ–°SAM Card, T6409 */
 	private static final int scReqData_HAToken = scReqData_H_TAC + scReqData_H_TAC_Len;
 	private static final int scReqData_HAToken_Len = 16;
 	public boolean SetReq_HAToken(String haToken) {
@@ -88,9 +89,9 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(haToken);
+		//byte[] b = Util.ascii2Bcd(haToken);
 	//	byte[] b = DataFormat.hexStringToByteArray(haToken);
-		byte[] b=  Util.sGetBinaryfromString(haToken);
+		byte[] b=  Util.ascii2Bcd(haToken);
 		if (b == null) {
 			return false;
 		}
@@ -100,14 +101,14 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* SAM Update Option, 1 byte, Host, SAM°Ñ¼Æ§ó·s¿ï¶µ (0: ¤£§ó·s, 1: §ó·s), ¥Î©ó·sSAM Card */
+	/* SAM Update Option, 1 byte, Host, SAMåƒæ•¸æ›´æ–°é¸é … (0: ä¸æ›´æ–°, 1: æ›´æ–°), ç”¨æ–¼æ–°SAM Card */
 	private static final int scReqData_SAMUpdateOption = scReqData_HAToken + scReqData_HAToken_Len;
 	private static final int scReqData_SAMUpdateOption_Len = 1;
-	private static final int scReqData_SAMUpdateOption_ACB = 0; 			// T5367#0, ¥[­È±ÂÅvÃB«× (ACB)
-	private static final int scReqData_SAMUpdateOption_ACL = 1; 			// T5367#0, ¥[­ÈÃB«×¹w³]­È (ACL)
-	private static final int scReqData_SAMUpdateOption_SAMUsageControl = 2; // T5367#0, SAM±±¨î°Ñ¼Æ (SAM Usage Control)
-	private static final int scReqData_SAMUpdateOption_TagListTable = 3; 	// T5367#0, Tag±±¨î°Ñ¼Æ (Tag List Table)
-	private static final int scReqData_SAMUpdateOption_HasNext = 7; 		// T5367#0, ¬O§_ÁÙ¦³¤U¤@­Ó°Ñ¼Æ¶·§ó·s (0: §_, 1: ¬O)
+	private static final int scReqData_SAMUpdateOption_ACB = 0; 			// T5367#0, åŠ å€¼æˆæ¬Šé¡åº¦ (ACB)
+	private static final int scReqData_SAMUpdateOption_ACL = 1; 			// T5367#0, åŠ å€¼é¡åº¦é è¨­å€¼ (ACL)
+	private static final int scReqData_SAMUpdateOption_SAMUsageControl = 2; // T5367#0, SAMæ§åˆ¶åƒæ•¸ (SAM Usage Control)
+	private static final int scReqData_SAMUpdateOption_TagListTable = 3; 	// T5367#0, Tagæ§åˆ¶åƒæ•¸ (Tag List Table)
+	private static final int scReqData_SAMUpdateOption_HasNext = 7; 		// T5367#0, æ˜¯å¦é‚„æœ‰ä¸‹ä¸€å€‹åƒæ•¸é ˆæ›´æ–° (0: å¦, 1: æ˜¯)
 	public void SetReq_UpdateACB(boolean bUpdate) {
 		if (bUpdate) {
 			SetBit(mRequest[scReqData_SAMUpdateOption], scReqData_SAMUpdateOption_ACB);
@@ -125,7 +126,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		}
 		mReqDirty = true;
 	}
-	// ¨Ó¦ÛCMAS T5367ªº¦^³ø
+	// ä¾†è‡ªCMAS T5367çš„å›å ±
 	public void SetReq_UpdateSAMUsageControl(boolean bUpdate) {
 		if (bUpdate) {
 			SetBit(mRequest[scReqData_SAMUpdateOption], scReqData_SAMUpdateOption_SAMUsageControl);
@@ -153,14 +154,13 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		mReqDirty = true;
 	}
 	
-	public boolean SetReq_SAMUpdateOption(String option) {
+	public boolean SetReq_SAMUpdateOption(String option) {		
 		if (option == null || option.length() != scReqData_SAMUpdateOption_Len * 2) {
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(option);
-	//	byte[] b = DataFormat.hexStringToByteArray(option);
-		byte[] b=Util.sGetBinaryfromString(option);
+		
+		byte[] b=Util.ascii2Bcd(option);
 		if (b == null) {
 			return false;
 		}
@@ -170,8 +170,8 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* New SAM Value, 40 bytes, Host, ·sSAM°Ñ¼Æ­È(SAM Update Option=0x00®É, ¸É0x00),
-	 * ·sSAM°Ñ¼Æ­Èªø«×¤£¨¬40bytes®É, ¥ª¾a¥k¸É0, ¥Î©ó·sSAM Card, T5367#2 */
+	/* New SAM Value, 40 bytes, Host, æ–°SAMåƒæ•¸å€¼(SAM Update Option=0x00æ™‚, è£œ0x00),
+	 * æ–°SAMåƒæ•¸å€¼é•·åº¦ä¸è¶³40bytesæ™‚, å·¦é å³è£œ0, ç”¨æ–¼æ–°SAM Card, T5367#2 */
 	private static final int scReqData_NewSAMValue = scReqData_SAMUpdateOption + scReqData_SAMUpdateOption_Len;
 	private static final int scReqData_NewSAMValue_Len = 40;
 	public boolean SetReq_NewSAMValue(String values) {
@@ -179,9 +179,9 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		//byte[] b = Util.sGetBinaryfromString(values);
+		//byte[] b = Util.ascii2Bcd(values);
 	//	byte[] b = DataFormat.hexStringToByteArray(values);
-		byte[]b=Util.sGetBinaryfromString(values);
+		byte[]b=Util.ascii2Bcd(values);
 		if (b == null) {
 			return false;
 		}
@@ -191,8 +191,8 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* Update SAM Value MAC, 16 bytes, Host, §ó·sSAM°Ñ¼Æ©Ò»İ¤§MAC(SAM Update Option=0x00®É, ¸É0x00), 
-	 * ¥Î©ó·sSAM Card, T5367#82 */
+	/* Update SAM Value MAC, 16 bytes, Host, æ›´æ–°SAMåƒæ•¸æ‰€éœ€ä¹‹MAC(SAM Update Option=0x00æ™‚, è£œ0x00), 
+	 * ç”¨æ–¼æ–°SAM Card, T5367#82 */
 	private static final int scReqData_UpdateSAMValueMAC = scReqData_NewSAMValue + scReqData_NewSAMValue_Len;
 	private static final int scReqData_UpdateSAMValueMAC_Len = 16;
 	public boolean SetReq_UpdateSAMValueMAC(String mac) {
@@ -200,7 +200,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		byte[] b = Util.sGetBinaryfromString(mac);
+		byte[] b = Util.ascii2Bcd(mac);
 		//byte[] b = DataFormat.hexStringToByteArray(mac);
 		if (b == null) {
 			return false;
@@ -212,17 +212,17 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 	}
 	
 	/* 
-	 * PPR_SignOn°Ñ¼Æ³]©w, 1 byte, Host, ¾A¥Î©ó¦³SignOn¤§³]³Æ
-	 * CPD Read Flag: Bit 0~1, ¤G¥NCPDÅª¨ú¤ÎÅçÃÒ³]©w, T4824
-	 * One Day Quota Write For Micro Payment: Bit 2~3, ¤pÃB®ø¶O¤é­­ÃB¼g¤J, T4823
-	 * SAM SignOnControl Flag: Bit 4~5, SAM¥dSignOn±±¨îºX¼Ğ, T5369
-	 * Check EV Flag For Mifare Only: Bit 6, ÀË¬d¾lÃBºX¼Ğ
-	 * Merchant Limit Use For Micro Payment: Bit 7, ¤pÃB®ø¶O³q¸ô­­¨î¨Ï¥ÎºX¼Ğ 
+	 * PPR_SignOnåƒæ•¸è¨­å®š, 1 byte, Host, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™
+	 * CPD Read Flag: Bit 0~1, äºŒä»£CPDè®€å–åŠé©—è­‰è¨­å®š, T4824
+	 * One Day Quota Write For Micro Payment: Bit 2~3, å°é¡æ¶ˆè²»æ—¥é™é¡å¯«å…¥, T4823
+	 * SAM SignOnControl Flag: Bit 4~5, SAMå¡SignOnæ§åˆ¶æ——æ¨™, T5369
+	 * Check EV Flag For Mifare Only: Bit 6, æª¢æŸ¥é¤˜é¡æ——æ¨™
+	 * Merchant Limit Use For Micro Payment: Bit 7, å°é¡æ¶ˆè²»é€šè·¯é™åˆ¶ä½¿ç”¨æ——æ¨™ 
 	 */
 	private static final int scReqData_SignOnParams1 = scReqData_UpdateSAMValueMAC + scReqData_UpdateSAMValueMAC_Len;
 	private static final int scReqData_SignOnParams1_Len = 1;
 	
-	/* CPD Read Flag: Bit 0~1, ¤G¥NCPDÅª¨ú¤ÎÅçÃÒ³]©w, T4824 */
+	/* CPD Read Flag: Bit 0~1, äºŒä»£CPDè®€å–åŠé©—è­‰è¨­å®š, T4824 */
 	public boolean SetReq_CPDReadFlag(String flag) {
 		if (flag == null || flag.length() != 2) {
 			return false;
@@ -230,13 +230,13 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		
 		byte b = mRequest[scReqData_SignOnParams1];
 		b = ClearBit(b, 0);
-		b = ClearBit(b, 1); // ¤£Åª¨úHost¥BReader¤£ÅçÃÒ
+		b = ClearBit(b, 1); // ä¸è®€å–Hostä¸”Readerä¸é©—è­‰
 		
-		if (flag.equals("01")) { // Åª¨úHost¥BReader¤£ÅçÃÒ
+		if (flag.equals("01")) { // è®€å–Hostä¸”Readerä¸é©—è­‰
 			b = SetBit(b, 0); 
-		} else if (flag.equals("10")) { // ¤£Åª¨úHost¥BReader­nÅçÃÒ
+		} else if (flag.equals("10")) { // ä¸è®€å–Hostä¸”Readerè¦é©—è­‰
 			b = SetBit(b, 1); 
-		} else if (flag.equals("11")) { // Åª¨úHost¥BReader­nÅçÃÒ
+		} else if (flag.equals("11")) { // è®€å–Hostä¸”Readerè¦é©—è­‰
 			b = SetBit(b, 0); 
 			b = SetBit(b, 1); 
 		} 
@@ -246,7 +246,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* One Day Quota Write For Micro Payment: Bit 2~3, ¤pÃB®ø¶O¤é­­ÃB¼g¤J, T4823 */
+	/* One Day Quota Write For Micro Payment: Bit 2~3, å°é¡æ¶ˆè²»æ—¥é™é¡å¯«å…¥, T4823 */
 	public boolean SetReq_OneDayQuotaWriteForMicroPayment(String flag) {
 		if (flag == null || flag.length() != 2) {
 			return false;
@@ -254,13 +254,13 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		
 		byte b = mRequest[scReqData_SignOnParams1];
 		
-		b = ClearBit(b, 0); // Mifare»PCPU³£¤£¼g¤J
+		b = ClearBit(b, 0); // Mifareèˆ‡CPUéƒ½ä¸å¯«å…¥
 		b = ClearBit(b, 1);
-		if (flag.equals("01")) { // Mifare¼g¤J, CPU¤£¼g¤J
+		if (flag.equals("01")) { // Mifareå¯«å…¥, CPUä¸å¯«å…¥
 			b = SetBit(b, 2);
-		} else if (flag.equals("10")) { // Mifare¤£¼g¤J, CPU¼g¤J
+		} else if (flag.equals("10")) { // Mifareä¸å¯«å…¥, CPUå¯«å…¥
 			b = SetBit(b, 3);
-		} else if (flag.equals("11")) { // Mifare¼g¤J, CPU¼g¤J (default)
+		} else if (flag.equals("11")) { // Mifareå¯«å…¥, CPUå¯«å…¥ (default)
 			b = SetBit(b, 2);
 			b = SetBit(b, 3);
 		}
@@ -270,7 +270,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, SAM SignOnControl Flag: Bit 4~5, SAM¥dSignOn±±¨îºX¼Ğ, T5309 */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, SAM SignOnControl Flag: Bit 4~5, SAMå¡SignOnæ§åˆ¶æ——æ¨™, T5309 */
 	public boolean SetReq_SAMSignOnControlFlag(String flag) {
 		if (flag == null || flag.length() != 2) {
 			return false;
@@ -294,71 +294,84 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Check EV Flag For Mifare Only: Bit 6, ÀË¬d¾lÃBºX¼Ğ, T6002#12 */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Check EV Flag For Mifare Only: Bit 6, æª¢æŸ¥é¤˜é¡æ——æ¨™, T6002#12 */
 	public boolean SetReq_CheckEVFlagForMifareOnly(String flag) {
+		
+		logger.info("setter:"+flag);
 		if (flag == null || flag.length() != 2) {
 			return false;
 		}
 		
 		byte b = mRequest[scReqData_SignOnParams1];
-		if (flag.equals("01")) { 
-			b = SetBit(b, 6); // ¤£ÀË¬d¾lÃB
-		} else { 
-			b = ClearBit(b, 6); // ÀË¬d¾lÃB (default)
-		}
 		
+		logger.debug("OneDay..CheckEV value:"+String.format("%02X", b));
+		if (flag.equals("01")) { 
+			logger.debug("setBit");
+			b = SetBit(b, 6); // ä¸æª¢æŸ¥é¤˜é¡
+		} else { 
+			logger.debug("clearBit");
+			b = ClearBit(b, 6); // æª¢æŸ¥é¤˜é¡ (default)
+		}
+		logger.debug("OneDay..CheckEV value:"+String.format("%02X", b));
 		mRequest[scReqData_SignOnParams1] = b;
 		mReqDirty = true;
 		return true;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Merchant Limit Use For Micro Payment: Bit 7, ¤pÃB®ø¶O³q¸ô­­¨î¨Ï¥ÎºX¼Ğ, 
-	 * T6002#28, 00: ¤£­­¨î, 01: ­­¨î  
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Merchant Limit Use For Micro Payment: Bit 7, å°é¡æ¶ˆè²»é€šè·¯é™åˆ¶ä½¿ç”¨æ——æ¨™, 
+	 * T6002#28, 00: ä¸é™åˆ¶, 01: é™åˆ¶  
 	 */
-	public void SetReq_MerchantLimitUseForMicroPayment(boolean bLimit) {
+	//public void SetReq_MerchantLimitUseForMicroPayment(boolean bLimit) {
+	public void SetReq_MerchantLimitUseForMicroPayment(String flag) {
+	
+		logger.info("setter:"+flag);
 		byte b = mRequest[scReqData_SignOnParams1];
 		
-		if (bLimit) {
-			b = ClearBit(b, 7); // ­­¨î¨Ï¥Î
+		logger.debug("OneDay..value:"+String.format("%02X", b));
+		if (flag.equals("01")) { 
+			logger.debug("setBit");
+			b = SetBit(b, 7); // ä¸é™åˆ¶ä½¿ç”¨			
 		} else {
-			b = SetBit(b, 7); // ¤£­­¨î¨Ï¥Î
+			logger.debug("clearBit");
+			b = ClearBit(b, 7); // é™åˆ¶ä½¿ç”¨
 		}
 		
+		logger.debug("OneDay..value:"+String.format("%02X", b));
 		mRequest[scReqData_SignOnParams1] = b;
 		mReqDirty = true;
 	}
 	
-	public void SetReq_MerchantLimitUseForMicroPayment(String flag) {
-		// ³o¸Ìªº¸ê®ÆÄæ¦ì»¡©ú¦³°İÃD, ­n½T©w...
-	}
+	
 	
 	/* 
-	 * PPR_SignOn°Ñ¼Æ³]©w, 1 byte, Host, ¾A¥Î©ó¦³SignOn¤§³]³Æ
-	 * One Day Quota Flag For Micro Payment: Bit 0~1, ¤pÃB®ø¶O¤é­­ÃBºX¼Ğ, T6002#0
-	 * Once Quota Flag For Micro Payment: Bit 2, ¤pÃB®ø¶O¦¸­­ÃBºX¼Ğ, T6002#6
-	 * Check Debit Flag: Bit 3, ¦©­È¥æ©ö¦XªkÅçÃÒºX¼Ğ, T6002#22
-	 * Mifare Check Enable Flag: Bit 4, ¤G¥N¥dLevel 1
-	 * Pay On Behalf Flag: Bit 5, ¬O§_¤¹³\¥N¹Ô
-	 * RFU: Bit 6~7, «O¯d 
+	 * PPR_SignOnåƒæ•¸è¨­å®š, 1 byte, Host, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™
+	 * One Day Quota Flag For Micro Payment: Bit 0~1, å°é¡æ¶ˆè²»æ—¥é™é¡æ——æ¨™, T6002#0
+	 * Once Quota Flag For Micro Payment: Bit 2, å°é¡æ¶ˆè²»æ¬¡é™é¡æ——æ¨™, T6002#6
+	 * Check Debit Flag: Bit 3, æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰æ——æ¨™, T6002#22
+	 * Mifare Check Enable Flag: Bit 4, äºŒä»£å¡Level 1
+	 * Pay On Behalf Flag: Bit 5, æ˜¯å¦å…è¨±ä»£å¢Š
+	 * RFU: Bit 6~7, ä¿ç•™ 
 	 */
 	private static final int scReqData_SignOnParams2 = scReqData_SignOnParams1 + scReqData_SignOnParams1_Len;
 	private static final int scReqData_SignOnParams2_Len = 1;
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, One Day Quota Flag For Micro Payment: Bit 0~1, ¤pÃB®ø¶O¤é­­ÃBºX¼Ğ, T6002#0 */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, One Day Quota Flag For Micro Payment: Bit 0~1, å°é¡æ¶ˆè²»æ—¥é™é¡æ——æ¨™, T6002#0 */
 	public boolean SetReq_OneDayQuotaFlagForMicroPayment(String flag) {
+		
+		logger.info("setter:"+flag);
 		if (flag == null || flag.length() != 2) {
 			return false;
 		}
 		
 		byte b = mRequest[scReqData_SignOnParams2];
 		
-		b = ClearBit(b, 0); // ¤£ÀË¬d, ¤£²Ö­p¤é­­ÃB
+		b = ClearBit(b, 0); // ä¸æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
 		b = ClearBit(b, 1);
-		if (flag.equals("01")) { // ¤£ÀË¬d, ²Ö­p¤é­­ÃB
+		if (flag.equals("01")) { // ä¸æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 			b = SetBit(b, 0);
-		} else if (flag.equals("10")) { // ÀË¬d, ¤£²Ö­p¤é­­ÃB
+		} else if (flag.equals("10")) { // æª¢æŸ¥, ä¸ç´¯è¨ˆæ—¥é™é¡
 			b = SetBit(b, 1);
-		} else if (flag.equals("11")) { // ÀË¬d, ²Ö­p¤é­­ÃB
+		} else if (flag.equals("11")) { // æª¢æŸ¥, ç´¯è¨ˆæ—¥é™é¡
 			b = SetBit(b, 0);
 			b = SetBit(b, 1);
 		}
@@ -368,7 +381,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return false;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Once Quota Flag For Micro Payment: Bit 2, ¤pÃB®ø¶O¦¸­­ÃBºX¼Ğ, T6002#6 */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Once Quota Flag For Micro Payment: Bit 2, å°é¡æ¶ˆè²»æ¬¡é™é¡æ——æ¨™, T6002#6 */
 	public boolean SetReq_OnceQuotaFlagForMicroPayment(String flag) {
 		if (flag == null || flag.length() != 2) {
 			return false;
@@ -377,9 +390,9 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		byte b = mRequest[scReqData_SignOnParams2];
 		
 		if (flag.equals("01")) {
-			b = SetBit(b, 2); // ­­¨î¦¸­­ÃB
+			b = SetBit(b, 2); // é™åˆ¶æ¬¡é™é¡
 		} else {
-			b = ClearBit(b, 2); // ¤£­­¨î¦¸­­ÃB
+			b = ClearBit(b, 2); // ä¸é™åˆ¶æ¬¡é™é¡
 		}
 		
 		mRequest[scReqData_SignOnParams2] = b;
@@ -387,7 +400,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Check Debit Flag: Bit 3, ¦©­È¥æ©ö¦XªkÅçÃÒºX¼Ğ, T6002#22 */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Check Debit Flag: Bit 3, æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰æ——æ¨™, T6002#22 */
 	public boolean SetReq_CheckDebitFlag(String flag) {
 		if (flag == null || flag.length() != 2) {
 			return false;
@@ -396,9 +409,9 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		byte b = mRequest[scReqData_SignOnParams2];
 		
 		if (flag.equals("01")) {
-			b = SetBit(b, 3); // ­­¨î¦©­È¥æ©ö¦XªkÅçÃÒºX¼Ğ
+			b = SetBit(b, 3); // é™åˆ¶æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰æ——æ¨™
 		} else {
-			b = ClearBit(b, 3); // ¤£­­¨î¦©­È¥æ©ö¦XªkÅçÃÒºX¼Ğ
+			b = ClearBit(b, 3); // ä¸é™åˆ¶æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰æ——æ¨™
 		}
 		
 		mRequest[scReqData_SignOnParams2] = b;
@@ -406,19 +419,19 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Mifare Check Enable Flag: Bit 4, ¤G¥N¥dLevel 1 */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Mifare Check Enable Flag: Bit 4, äºŒä»£å¡Level 1 */
 	public boolean SetReq_MifareCheckEnableFlag(String flag) {
-		// Bruce, ¤£¶·±a­È
+		// Bruce, ä¸é ˆå¸¶å€¼
 		return false;
 	}
 	
-	/* PPR_SignOn°Ñ¼Æ³]©w, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Pay On Behalf Flag: Bit 5, ¬O§_¤¹³\¥N¹Ô */
+	/* PPR_SignOnåƒæ•¸è¨­å®š, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Pay On Behalf Flag: Bit 5, æ˜¯å¦å…è¨±ä»£å¢Š */
 	public boolean SetReq_PayOnBehalfFlag(String flag) {
-		// Bruce, ¤£¶·±a­È
+		// Bruce, ä¸é ˆå¸¶å€¼
 		return false;
 	}
 	
-	/* One Day Quota For Micro Payment, 2 bytes, Host, ¤pÃB®ø¶O¤é­­ÃBÃB«×, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Unsigned and LSB First, T6002#2 */
+	/* One Day Quota For Micro Payment, 2 bytes, Host, å°é¡æ¶ˆè²»æ—¥é™é¡é¡åº¦, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Unsigned and LSB First, T6002#2 */
 	private static final int scReqData_OneDayQuotaForMicroPayment = scReqData_SignOnParams2 + scReqData_SignOnParams2_Len;
 	private static final int scReqData_OneDayQuotaForMicroPayment_Len = 2;
 	public boolean SetReq_OneDayQuotaForMicroPayment(String amount) {
@@ -426,7 +439,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		byte[] b = Util.sGetBinaryfromString(amount);
+		byte[] b = Util.ascii2Bcd(amount);
 	//	byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
@@ -437,7 +450,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* Once Quota For Micro Payment, 2 bytes, Host, ¤pÃB®ø¶O¦¸­­ÃBÃB«×, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Unsigned and LSB First, T6002#8 */
+	/* Once Quota For Micro Payment, 2 bytes, Host, å°é¡æ¶ˆè²»æ¬¡é™é¡é¡åº¦, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Unsigned and LSB First, T6002#8 */
 	private static final int scReqData_OnceQuotaForMicroPayment = scReqData_OneDayQuotaForMicroPayment + scReqData_OneDayQuotaForMicroPayment_Len;
 	private static final int scReqData_OnceQuotaForMicroPayment_Len = 2;
 	public boolean SetReq_OnceQuotaForMicroPayment(String amount) {
@@ -445,7 +458,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		byte[] b = Util.sGetBinaryfromString(amount);
+		byte[] b = Util.ascii2Bcd(amount);
 		//byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
@@ -456,7 +469,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* Check Debit Value, 2bytes, Host, ¦©­È¥æ©ö¦XªkÅçÃÒª÷ÃB, ¾A¥Î©ó¦³SignOn¤§³]³Æ, Unsigned and LSB First, ?T6002#24? */
+	/* Check Debit Value, 2bytes, Host, æ‰£å€¼äº¤æ˜“åˆæ³•é©—è­‰é‡‘é¡, é©ç”¨æ–¼æœ‰SignOnä¹‹è¨­å‚™, Unsigned and LSB First, ?T6002#24? */
 	private static final int scReqData_CheckDebitValue = scReqData_OnceQuotaForMicroPayment + scReqData_OnceQuotaForMicroPayment_Len;
 	private static final int scReqData_CheckDebitValue_Len = 2;
 	public boolean SetReq_CheckDebitValue(String amount) {
@@ -464,7 +477,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		byte[] b = Util.sGetBinaryfromString(amount);
+		byte[] b = Util.ascii2Bcd(amount);
 	//byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
@@ -475,16 +488,16 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* Add Quota Flag, 1 byte, Host, ¥[­ÈÃB«×±±ºŞºX¼Ğ, ¾A¥Î©óÂÂªºÃB«×±±ºŞ, T6002#14 */
+	/* Add Quota Flag, 1 byte, Host, åŠ å€¼é¡åº¦æ§ç®¡æ——æ¨™, é©ç”¨æ–¼èˆŠçš„é¡åº¦æ§ç®¡, T6002#14 */
 	private static final int scReqData_AddQuotaFlag = scReqData_CheckDebitValue + scReqData_CheckDebitValue_Len;
 	private static final int scReqData_AddQuotaFlag_Len = 1;
 	public boolean SetReq_AddQuotaFlag(String flag) {
 		if (flag == null || flag.length() != scReqData_AddQuotaFlag_Len * 2) {
 			return false;
 		}
-		if (flag.equals("00")) { // ¤£ÀË¬dÃB«×
+		if (flag.equals("00")) { // ä¸æª¢æŸ¥é¡åº¦
 			mRequest[scReqData_AddQuotaFlag] = 0x00;
-		} else { // 0x01 (default), ÀË¬dÃB«× 
+		} else { // 0x01 (default), æª¢æŸ¥é¡åº¦ 
 			mRequest[scReqData_AddQuotaFlag] = 0x01;
 		}
 		
@@ -492,7 +505,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* Add Quota, 3 bytes, Host, ¥[­ÈÃB«×, ¾A¥Î©óÂÂªºÃB«×±±ºŞ, Unsigned and LSB First, T6002#16 */
+	/* Add Quota, 3 bytes, Host, åŠ å€¼é¡åº¦, é©ç”¨æ–¼èˆŠçš„é¡åº¦æ§ç®¡, Unsigned and LSB First, T6002#16 */
 	private static final int scReqData_AddQuota = scReqData_AddQuotaFlag + scReqData_AddQuotaFlag_Len;
 	private static final int scReqData_AddQuota_Len = 3;
 	public boolean SetReq_AddQuota(String amount) {
@@ -500,7 +513,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 			return false;
 		}
 		
-		byte[] b = Util.sGetBinaryfromString(amount);
+		byte[] b = Util.ascii2Bcd(amount);
 		//byte[] b = DataFormat.hexStringToByteArray(amount);
 		if (b == null) {
  			return false;
@@ -511,18 +524,24 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return true;
 	}
 	
-	/* RFU, «O¯d(Reserved For Use), ¸É0 */
+	/* RFU, ä¿ç•™(Reserved For Use), è£œ0 */
 	private static final int scReqData_RFU = scReqData_AddQuota + scReqData_AddQuota_Len;
 	private static final int scReqData_RFU_Len = 31;
 	
-	/* EDC, ÀË®Ö½X(Error Detection Code), Hash¤è¦¡(1byte, T5303) + Hsh Value(3byte, T5306) */
+	/* EDC, æª¢æ ¸ç¢¼(Error Detection Code), Hashæ–¹å¼(1byte, T5303) + Hsh Value(3byte, T5306) */
 	private static final int scReqData_EDC = scReqData_RFU + scReqData_RFU_Len;
 	private static final int scReqData_EDC_Len = 4;
-	public void SetReq_EDC() {
+	public boolean SetReq_EDC(String t5303_t5306) {
+		if (t5303_t5306 == null || t5303_t5306.length() != scReqData_EDC_Len * 2) {
+			return false;
+		}
 		
-		/* ???Not yet??? */
+		byte[] b = Util.ascii2Bcd(t5303_t5306);
+		
+		System.arraycopy(b, 0, mRequest, scReqData_EDC, scReqData_EDC_Len);
 		
 		mReqDirty = true;
+		return true;
 	}
 	
 	@Override
@@ -551,9 +570,9 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return scRespLength;
 	}
 	
-	/* Credit Balance Change Flag, 1 byte, SAM,  ¥[­È±ÂÅvÃB«×(ACB)ÅÜ§óºX¼Ğ
-	 * 0x00: ¥¼ÅÜ§ó
-	 * 0x01: ÃB«×¦³ÅÜ§ó  
+	/* Credit Balance Change Flag, 1 byte, SAM,  åŠ å€¼æˆæ¬Šé¡åº¦(ACB)è®Šæ›´æ——æ¨™
+	 * 0x00: æœªè®Šæ›´
+	 * 0x01: é¡åº¦æœ‰è®Šæ›´  
 	 */
 	private static final int scRespData_CreditBalanceChangeFlag = scRespDataOffset;
 	private static final int scRespData_CreditBalanceChangeFlag_Len = 1;
@@ -564,7 +583,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 		return mRespond[scRespData_CreditBalanceChangeFlag]; 
 	}
 	
-	/* Original Authorized Credit Limit, 3 bytes, ·sSAM,  ­ì¥[­ÈÃB«×¹w³]­È(ACL)
+	/* Original Authorized Credit Limit, 3 bytes, æ–°SAM,  åŸåŠ å€¼é¡åº¦é è¨­å€¼(ACL)
 	 * Unsigned and LSB First  
 	 */
 	private static final int scRespData_OriginalAuthorizedCreditLimit = scRespData_CreditBalanceChangeFlag + scRespData_CreditBalanceChangeFlag_Len;
@@ -577,7 +596,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 						scRespData_OriginalAuthorizedCreditLimit + scRespData_OriginalAuthorizedCreditLimit_Len);
 	}
 	
-	/* Original Authorized Credit Balance, 3 bytes, ·sSAM,  ­ì¥[­È±ÂÅvÃB«×(ACB)
+	/* Original Authorized Credit Balance, 3 bytes, æ–°SAM,  åŸåŠ å€¼æˆæ¬Šé¡åº¦(ACB)
 	 * Unsigned and LSB First  
 	 */
 	private static final int scRespData_OriginalAuthorizedCreditBalance = scRespData_OriginalAuthorizedCreditLimit + scRespData_OriginalAuthorizedCreditLimit_Len;
@@ -590,7 +609,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 						scRespData_OriginalAuthorizedCreditBalance + scRespData_OriginalAuthorizedCreditBalance_Len);
 	}
 	
-	/* Original Authorized Credit Cumulative, 3 bytes, ·sSAM,  ­ì¥[­È²Ö¿n¤w¥ÎÃB«×(ACC)
+	/* Original Authorized Credit Cumulative, 3 bytes, æ–°SAM,  åŸåŠ å€¼ç´¯ç©å·²ç”¨é¡åº¦(ACC)
 	 * Unsigned and LSB First  
 	 */
 	private static final int scRespData_OriginalAuthorizedCreditCumulative = scRespData_OriginalAuthorizedCreditBalance + scRespData_OriginalAuthorizedCreditBalance_Len;
@@ -603,7 +622,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 						scRespData_OriginalAuthorizedCreditCumulative + scRespData_OriginalAuthorizedCreditCumulative_Len);
 	}
 	
-	/* Original Authorized Cancel Credit Cumulative, 3 bytes, ·sSAM,  ­ì¨ú®ø¥[­È²Ö¿n¤w¥ÎÃB«×(ACCC)
+	/* Original Authorized Cancel Credit Cumulative, 3 bytes, æ–°SAM,  åŸå–æ¶ˆåŠ å€¼ç´¯ç©å·²ç”¨é¡åº¦(ACCC)
 	 * Unsigned and LSB First  
 	 */
 	private static final int scRespData_OriginalAuthorizedCancelCreditCumulative = scRespData_OriginalAuthorizedCreditCumulative + scRespData_OriginalAuthorizedCreditCumulative_Len;
@@ -616,7 +635,7 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 						scRespData_OriginalAuthorizedCancelCreditCumulative + scRespData_OriginalAuthorizedCancelCreditCumulative_Len);
 	}
 
-	/* CACrypto, 16 bytes, ·sSAM,  Credit Authorization Cryptogram
+	/* CACrypto, 16 bytes, æ–°SAM,  Credit Authorization Cryptogram
 	 * Unsigned and LSB First  
 	 */
 	private static final int scRespData_CACrypto = scRespData_OriginalAuthorizedCancelCreditCumulative + scRespData_OriginalAuthorizedCancelCreditCumulative_Len;
@@ -663,8 +682,8 @@ public static final String scDescription = "±N0810ºİ¥½¶}¾÷°T®§³z¹LReader¶Ç¤JSAM¥
 	}
 
 	@Override
-	protected void debugResponseData() {
+	public void debugResponseData() {
 		// TODO Auto-generated method stub
-		
+		logger.debug("pprSignon recv:" + Util.hex2StringLog(mRespond));
 	}
 }

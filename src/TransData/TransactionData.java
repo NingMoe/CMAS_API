@@ -778,21 +778,21 @@ public class CPUCARDSETTINGPARAMETER{//4829
 	    	this.stTermHostInfo_t.ucOneDayQuotaFlag=DongleOut.GetResp_OneDayQuotaFlagForMicroPayment();//One Day Quota Flag
 	    	
       
-	    	this.stTermHostInfo_t.ucOnceQuotaFlag =(byte)(DongleOut.GetResp_OnceQuotaFlagForMicroPayment()?1:0);//Once Quota Flag
+	    	//this.stTermHostInfo_t.ucOnceQuotaFlag =(byte)(DongleOut.GetResp_OnceQuotaFlagForMicroPayment()?1:0);//Once Quota Flag
 	    	
 	    	//System.arraycopy(DongleOut.outstSAMParameterInfo_t.ucOnceQuota,0,this.stTermHostInfo_t.ucOnceQuota,0,DongleOut.outstSAMParameterInfo_t.ucOnceQuota.length);  
 	    	this.stTermHostInfo_t.SetucOnceQuota(DongleOut.GetResp_OnceQuotaForMicroPayment(), DongleOut.GetResp_OnceQuotaForMicroPayment().length);
 	    
-	    	stTermHostInfo_t.ucCheckEVFlag = DongleOut.bGetResp_CheckEVFlagForMifareOnly();//Check EV Flag
-	    	stTermHostInfo_t.ucAddQuotaFlag = DongleOut.bGetResp_AddQuotaFlag();//.outstSAMParameterInfo_t.ucAddQuotaFlag;//Add Quota Flag
+	    	//stTermHostInfo_t.ucCheckEVFlag = DongleOut.bGetResp_CheckEVFlagForMifareOnly();//Check EV Flag
+	    	//stTermHostInfo_t.ucAddQuotaFlag = DongleOut.bGetResp_AddQuotaFlag();//.outstSAMParameterInfo_t.ucAddQuotaFlag;//Add Quota Flag
 	    	//System.arraycopy(DongleOut.outstSAMParameterInfo_t.ucAddQuota,0,this.stTermHostInfo_t.ucAddQuota,0,DongleOut.outstSAMParameterInfo_t.ucAddQuota.length);  
 	    	this.stTermHostInfo_t.SetucAddQuota(DongleOut.GetResp_AddQuota(), DongleOut.GetResp_AddQuota().length);
-	    	stTermHostInfo_t.ucCheckDeductFlag = DongleOut.bGetResp_CheckDebitFlag();//Check Debit Flag
+	    	//stTermHostInfo_t.ucCheckDeductFlag = DongleOut.bGetResp_CheckDebitFlag();//Check Debit Flag
 	    	//System.arraycopy(DongleOut.outstSAMParameterInfo_t.ucCheckDeductValue,0,this.stTermHostInfo_t.ucCheckDeductValue,0,DongleOut.outstSAMParameterInfo_t.ucCheckDeductValue.length);  
 	    	this.stTermHostInfo_t.SetucCheckDeductValue(DongleOut.GetResp_CheckDebitValue(), DongleOut.GetResp_CheckDebitValue().length);
 	    	
 	    	
-	    	stTermHostInfo_t.ucDeductLimitFlag = DongleOut.bGetResp_MerchantLimitUseForMicroPayment();//;.bDeductLimitFlag7;//Deduct Limit Flag
+	    	//stTermHostInfo_t.ucDeductLimitFlag = DongleOut.bGetResp_MerchantLimitUseForMicroPayment();//;.bDeductLimitFlag7;//Deduct Limit Flag
 	     //	System.arraycopy(API_VERSION,0,this.stTermHostInfo_t.ucAPIVersion,0,3);  
 	    	byte[] API_VERSION=new byte[]{0x00,0x00,0x00};
 	     	this.stTermHostInfo_t.SetucAPIVersion(API_VERSION, 3);

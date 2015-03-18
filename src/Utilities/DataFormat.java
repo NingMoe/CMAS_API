@@ -141,30 +141,7 @@ public static byte booleam2byte(Boolean vIn)
 		return bcd;
 	}
  
-	public static String BCDtoString(byte bcd) {
-		StringBuffer sb = new StringBuffer();
-		
-		byte high = (byte) (bcd & 0xf0);
-		high >>>= (byte) 4;	
-		high = (byte) (high & 0x0f);
-		byte low = (byte) (bcd & 0x0f);
-		
-		sb.append(high);
-		sb.append(low);
-		
-		return sb.toString();
-	}
 	
-	public static String BCDtoString(byte[] bcd) {
- 
-	StringBuffer sb = new StringBuffer();
- 
-	for (int i = 0; i < bcd.length; i++) {
-		sb.append(BCDtoString(bcd[i]));
-	}
- 
-	return sb.toString();
-	}
 	
 	//////////////////////////////////////////////////////////////
 	public int GetBytetoInt(int byteValue)
@@ -182,12 +159,14 @@ public static byte booleam2byte(Boolean vIn)
 	
 	public static int byteArrayToInt(byte[] b) 
 	{
-	int value = 0;
-	for (int i = 0; i < 4; i++) {
-	int shift = (4 - 1 - i) * 8;
-	value += (b[i] & 0x000000FF) << shift;
-	}
-	return value;
+		int value = 0;
+		int shift = 0;
+		int len = b.length;
+		for (int i = 0; i < len; i++) {
+			shift = (len - 1 - i) * 8;
+			value += (b[i] & 0xFF) << shift;
+		}
+		return value;
 	}
 	
 	public static byte[] intToByteArray(int a)
@@ -240,14 +219,5 @@ public static byte booleam2byte(Boolean vIn)
 	    return new String(hexChars);
 	}
 
-	public static String hex2StringLog(byte[] data)
-	{
-		StringBuilder sb = new StringBuilder();
-		   
-		for(byte b: data)
-		      sb.append("("+String.format("%02x", b & 0xff)+")");
-		   
-		return sb.toString();	
-	}
 	
 }
