@@ -21,6 +21,9 @@ public class ConfigManager {
 	public static final String HOST_TEST_INFO_FILE = "HostTest.properties";
 	public static final String HOST_PROD_INFO_FILE = "HostProduction.properties";
 	public static final String USER_DEFINITION_FILE = "UserDefinition.properties";
+	public static final String CARD_NUMBER_BLACKLIST = "CardNumber.black";
+	public static final String CA_CERT = "CA.cer";
+	public static final String API_JAR = "EasyCardApi.jar";
 	
 	public enum ConfigOrder
 	{

@@ -9,6 +9,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
@@ -17,11 +18,12 @@ import javax.net.SocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManager;
 
 import org.apache.log4j.Logger;
 
-import Process.Process;
+import Comm.Socket.MyX509TrustManager;
+
 
 //public class SSL extends Thread {
 public class SSL {
@@ -29,13 +31,13 @@ public class SSL {
 	static Logger logger = Logger.getLogger(SSL.class);
 	
 	//private String scCertFilePath = "../config/CMAS-FTP51T.jks";
-	private String scCertFilePath=null ;//= "../config/CMAS-FTP51T.jks";
-	
-	private final String scPassWord = "Cmas@999";
+	private String CAFilePath=null ;//= "../config/CMAS-FTP51T.jks";
+	private String clentCertPath=null;
+	//private final String scPassWord = "Cmas@999";
 	
 	private final int scBufferLen = 65535;
 	
-	private SSLSocket mSocket = null;
+	private SSLSocket sslSocket = null;
 	private String mUrl = null;
 	private int mPort = 0; 
 	
@@ -44,83 +46,27 @@ public class SSL {
     
     private byte[] mBuffer = new byte[scBufferLen];
     
-	public SSL(String url, int port, String certFilePath) {
+	public SSL(String url, int port, String CAFilePath, String clientCertPath) {
 		mUrl = url;
 		mPort = port;
-		scCertFilePath = certFilePath;
+		this.CAFilePath = CAFilePath;
+		this.clentCertPath = clientCertPath;
 	}
 	
-	//protected boolean connect() {
-	public boolean connect() {
-		if (mUrl == null) {
-			return false;
-		}
 	
-		KeyStore keystore = null;
-		try {
-			keystore = getKeyStore();
-		} catch (KeyStoreException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (NoSuchAlgorithmException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (CertificateException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		}
-		
-		mSocket = null;
-		try {
-			mSocket = getSSLSocket(keystore);
-		} catch (KeyManagementException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (UnrecoverableKeyException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (KeyStoreException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (NoSuchAlgorithmException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (UnknownHostException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
-			//mClient.onError(e.getMessage());
-			return false;
-		}
-		
-		return true;
-	}
 	
 	//protected boolean disconnect() {
 	public boolean disconnect() {
 		
 		logger.info("Start");
-		if (mSocket == null) {
+		if (sslSocket == null) {
 			logger.error("sslSocket Obj 'NULL'");
 			return false;
 		}
 		
 		try {
 			logger.info("SSL Close");
-			mSocket.close();
+			sslSocket.close();
 		} catch (IOException e) {
 			
 			logger.error(e.getMessage());
@@ -130,6 +76,7 @@ public class SSL {
 		return true;
 	}
 	
+	/*
 	private KeyStore getKeyStore() throws KeyStoreException,
 	  									  NoSuchAlgorithmException,
 	  									  CertificateException,
@@ -150,26 +97,37 @@ public class SSL {
 		fKeyStore.close();
 
 		return keystore;
-	}
+	}*/
 	
-	private SSLSocket getSSLSocket(KeyStore keystore) throws KeyStoreException,
-	   														 NoSuchAlgorithmException,
-	   														 IOException,
-	   														 KeyManagementException,
-	   														 UnknownHostException,
-	   														 UnrecoverableKeyException,
-	   														 IOException {
-		TrustManagerFactory tmf = TrustManagerFactory.getInstance("SUNX509");
-		tmf.init(keystore);
-
-		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SUNX509");
-		kmf.init(keystore, scPassWord.toCharArray()); 
-
-		SSLContext context = SSLContext.getInstance("SSL");
-		context.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-
-		SocketFactory sf = context.getSocketFactory();
-		return (SSLSocket) sf.createSocket(mUrl, mPort);
+	
+	public boolean connect() {
+		TrustManager[] trustManager = null;
+		SSLContext context = null;
+		try {
+			trustManager = new TrustManager [] {
+					(TrustManager) new MyX509TrustManager(CAFilePath,clentCertPath)				
+			};
+			context = SSLContext.getInstance("SSL");
+			context.init(null, trustManager, null);
+			SocketFactory sf = context.getSocketFactory();
+			sslSocket = (SSLSocket) sf.createSocket(mUrl, mPort);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error(e1.getMessage());
+		}
+		
+		
+		if(sslSocket==null) 
+			return false;
+		
+		return true;
 	}
 	
 	//protected void sendRequest() throws IOException {
@@ -179,7 +137,7 @@ public class SSL {
 		try {
 			
 		
-			if (mSocket == null) {
+			if (sslSocket == null) {
 				//throw new IOException(ICMASResponse.scErr_NoConnection);
 				logger.error("SSL Socket NoConnection");
 				return null;
@@ -192,10 +150,10 @@ public class SSL {
 				//throw new IOException(ICMASResponse.scErr_InvalidParam);
 			}*/
 			OutputStream out;
-			out = mSocket.getOutputStream();
+			out = sslSocket.getOutputStream();
 			
 	   	 	InputStream in;
-	   	 	in = mSocket.getInputStream();
+	   	 	in = sslSocket.getInputStream();
 			
 	   	 	
 	   	 	out.write(req.getBytes("UTF-8"));

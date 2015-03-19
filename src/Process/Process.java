@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import CMAS.CmasDataSpec;
 import CMAS.CmasDataSpec.SubTag5596;
+import CMAS.CmasFTPList;
 import CMAS.CmasKernel;
 import Comm.FTP.Ftp4j;
 import Comm.Socket.*;
@@ -137,7 +138,8 @@ public class Process {
 				logger.debug(hostInfo.getProperty("HostUrl"));
 				ssl = new SSL(hostInfo.getProperty("HostUrl"), 
 						Integer.valueOf(hostInfo.getProperty("HostPort")), 
-						hostInfo.getProperty("SSLCertFile"));
+						null,
+						null);
 				if(!ssl.connect()){
 					logger.error("ssl connect fail");
 					return ApiRespCode.SSL_CONNECT_FAIL;
@@ -178,7 +180,10 @@ public class Process {
 						return ApiRespCode.fromCode(t3900, CmasRespCode.values());					
 					}				
 				}
-				else{/*maybe TimeOut*/}
+				else{/*maybe TimeOut*/
+					logger.error("CMAS maybe be timeout, nothing received");
+					return ApiRespCode.HOST_NO_RESPONSE;
+				}
 			}//while
 			
 			if(t3900.equalsIgnoreCase("00")){
@@ -189,21 +194,15 @@ public class Process {
 				logger.debug("SignOn Adv:"+cmasAdv);
 				cmasResponse = ssl.sendRequest(cmasAdv);
 				logger.debug("SignOn Adv Response:"+cmasResponse);
+			
+				//FTP download Start
+				CmasFTPList cmasFTP = new CmasFTPList(specResetResp.getT5595s());
+				cmasFTP.startDownload(hostInfo.getProperty("FtpIP"), 
+						990,
+						hostInfo.getProperty("FtpLoginId"),
+						hostInfo.getProperty("FtpLoinPwd"));
+			
 			}
-			
-			//ftp download File
-			Ftp4j ftps = new Ftp4j(null, null);
-			if(ftps.connect2Server(hostInfo.getProperty("FtpIP"), 
-					990,
-					hostInfo.getProperty("FtpLoginId"), 
-					hostInfo.getProperty("FtpLoginPwd"),
-					true)){
-				logger.info("FTP Connect OK");
-				//ftps.download(serverPath, localPath)
-				
-			}
-			
-			
 		} catch(Exception e) {			
 			logger.error("Exception:"+e.getMessage());
 			e.printStackTrace();

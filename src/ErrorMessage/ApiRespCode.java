@@ -15,11 +15,12 @@ public enum ApiRespCode  implements IRespCode{
 	COMPORT_OPEN_FAIL("-4", "Reader Open Comport fail", 1),
 	SSL_CONNECT_FAIL("-5", "SSL Connection Fail", 1),
 	READER_NO_RESPONSE("-6", "Reader no response", 1),
-	UNKNOWN_ERROR_CODE("XXXX","Unknowen ErrCode", 1);
+	HOST_NO_RESPONSE("-7", "Host no response", 1),
+	UNKNOWN_ERROR_CODE("XXX","Unknowen ErrCode", 1);
 	
 
 	  
-	private final String id; 
+	private String id; 
 	private final String msg;
 	private final int actionId;
 	private static Map<String, IRespCode> codeToEnumMap;
@@ -44,6 +45,11 @@ public enum ApiRespCode  implements IRespCode{
 		    return this.actionId; 
 	  }
 	  
+	  private void setId(String id)
+	  {
+		  this.id = id;
+	  }
+	  
 	  public static IRespCode fromCode(String code, IRespCode[] rc) {
             // Keep a hashmap of mapping between code and corresponding enum as a cache.  We need to initialize it only once
             if (codeToEnumMap == null) {
@@ -55,7 +61,9 @@ public enum ApiRespCode  implements IRespCode{
 
             IRespCode enumForGivenCode = codeToEnumMap.get(code);
             if (enumForGivenCode == null) {
-                enumForGivenCode = UNKNOWN_ERROR_CODE;
+                //enumForGivenCode = UNKNOWN_ERROR_CODE;
+            	UNKNOWN_ERROR_CODE.setId(code);
+            	enumForGivenCode = UNKNOWN_ERROR_CODE;
             }
 
             return enumForGivenCode;      
