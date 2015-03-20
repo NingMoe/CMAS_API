@@ -12,7 +12,7 @@ import CMAS.CmasDataSpec.Issuer;
 import CMAS.CmasDataSpec.SubTag5588;
 import CMAS.CmasDataSpec.SubTag5596;
 import CMAS.CmasDataSpec.SubTag6002;
-import Process.ConfigManager;
+import CMAS.ConfigManager;
 import Reader.PPR_Reset;
 import Reader.PPR_SignOn;
 import Utilities.DataFormat;

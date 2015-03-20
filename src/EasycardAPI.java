@@ -2,24 +2,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-
-
-
-
-
-
-
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import Process.Process;
-import TransData.BatchInfo;
-import TransData.TMINFO;
-import CMAS.CMAS;
-import CMAS.CMASTAG;
-import CMAS.SSLClient;
-import CMAS.TransFormat;
+import CMAS.Process;
 import ErrorMessage.IRespCode;
 
 
@@ -65,7 +51,7 @@ public class EasycardAPI {
 	}
 	
 
-	public static  void Do_Signon()
+	public static void cmasSignOn()
 	{	
 		try{
 		
@@ -105,7 +91,7 @@ public class EasycardAPI {
 		
 		
 		apiInit();
-	    Do_Signon();
+	    cmasSignOn();
   
 	     logger.info("End");
 	}

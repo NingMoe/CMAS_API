@@ -30,7 +30,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import CMAS.CMAS;
-import CMAS.SSLClient;
+//import CMAS.SSLClient;
  
 
 public class BatchInfo {
@@ -77,19 +77,19 @@ public class BatchInfo {
 	    
 	    
  public static boolean WriteFile(String str, String path, boolean append)
- { // ¼gÀÉ
+ { // ï¿½gï¿½ï¿½
 
 	   try {
 
-	   File file = new File(path);// «Ø¥ßÀÉ®×¡A·Ç³Æ¼gÀÉ
+	   File file = new File(path);// ï¿½Ø¥ï¿½ï¿½É®×¡Aï¿½Ç³Æ¼gï¿½ï¿½
 
-	   BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), "utf8"));// ³]©w¬°BIG5®æ¦¡
+	   BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), "utf8"));// ï¿½]ï¿½wï¿½ï¿½BIG5ï¿½æ¦¡
 
-	   // °Ñ¼Æappend¥Nªí­n¤£­nÄ~Äò³\¤J¸ÓÀÉ®×¤¤
+	   // ï¿½Ñ¼ï¿½appendï¿½Nï¿½ï¿½nï¿½ï¿½ï¿½nï¿½~ï¿½ï¿½\ï¿½Jï¿½ï¿½ï¿½É®×¤ï¿½
 
-	   writer.write(str); // ¼g¤J¸Ó¦r¦ê
+	   writer.write(str); // ï¿½gï¿½Jï¿½Ó¦rï¿½ï¿½
 
-	   writer.newLine(); // ¼g¤J´«¦æ
+	   writer.newLine(); // ï¿½gï¿½Jï¿½ï¿½ï¿½ï¿½
 
 	   writer.close(); 
 
@@ -97,7 +97,7 @@ public class BatchInfo {
 
 	   e.printStackTrace();
 
-	   System.out.println(path + "¼gÀÉ¿ù»~!!");return false;
+	   System.out.println(path + "ï¿½gï¿½É¿ï¿½ï¿½~!!");return false;
 
 	   }
 	return true;
@@ -123,16 +123,16 @@ public class BatchInfo {
 			    iDEDUCTAMT=0;
 			    SaveBatchInfo();
 	   }
-	   //³]©w·í«e¨Ï¥Î³]³Æ½s¸¹
-	   //§å¦¸¥æ©ö¥æ©ö°O¿ý¸òµÛ³]³Æ¡A¥æ©ö®É»Ý°O¿ý³]³Æ½s¸¹
-	   //¨Ã°O¿ý¦bÀÉ¦W¤¤¡AÀÉ¦W½s½X Batch+Deviceid+.dat
+	   //ï¿½]ï¿½wï¿½ï¿½eï¿½Ï¥Î³]ï¿½Æ½sï¿½ï¿½
+	   //ï¿½å¦¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½Û³]ï¿½Æ¡Aï¿½ï¿½ï¿½ï¿½É»Ý°Oï¿½ï¿½ï¿½]ï¿½Æ½sï¿½ï¿½
+	   //ï¿½Ã°Oï¿½ï¿½ï¿½bï¿½É¦Wï¿½ï¿½ï¿½Aï¿½É¦Wï¿½sï¿½X Batch+Deviceid+.dat
 
 	   void SetDeviceID(String devid)
 	   {
 		   sDeviceID=devid;
 		   
 	   }
-		   //¨ú±o·í«e§å¦¸¸¹
+		   //ï¿½ï¿½ï¿½oï¿½ï¿½eï¿½å¦¸ï¿½ï¿½
 	public   int GetBatchSN(int BatchSn)
 	   {
 		  
@@ -146,7 +146,7 @@ public class BatchInfo {
 		    sBatchSN=GetBatchSNStr();
 		    return iBatchSN;
 	   }
-	   //¨ú±o§å¦¸§Ç¸¹   YYMMDD+00()¨â½X§Ç¸¹
+	   //ï¿½ï¿½ï¿½oï¿½å¦¸ï¿½Ç¸ï¿½   YYMMDD+00()ï¿½ï¿½Xï¿½Ç¸ï¿½
 	public   String GetBatchSNStr(){	   	
 	   		Date now = new Date( );
 		    SimpleDateFormat fDate =   new SimpleDateFormat ("YYMMDD");
@@ -207,7 +207,7 @@ public class BatchInfo {
 		            System.out.println("iDEDUCTCnt: " + iDEDUCTCnt);
 		            System.out.println("iDEDUCTAMT: " + iDEDUCTAMT);
 	           }catch (IOException e) {
-	        	    init();//Åª¤£¨ìÀÉ®×
+	        	    init();//Åªï¿½ï¿½ï¿½ï¿½ï¿½É®ï¿½
 	        	   
 	           }catch (Exception e) {
 	               e.printStackTrace();

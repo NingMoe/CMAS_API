@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 
 import Comm.FTP.Ftp4j;
-import Process.ConfigManager;
+import CMAS.ConfigManager;
 
 public class CmasFTPList {
 	
@@ -25,7 +25,7 @@ public class CmasFTPList {
 				logger.error("FTP Connect Fail");
 				return;
 			}
-			
+			String rootDir = ftps.getCurrentDIR();
 			logger.info("FTP Connect OK");
 			for(CmasDataSpec.SubTag5595 t5595:t5595s)
 			{		
@@ -35,9 +35,8 @@ public class CmasFTPList {
 					filename = ConfigManager.CA_CERT;
 				else if(t559501.equalsIgnoreCase("TM12"))
 					filename = ConfigManager.API_JAR;
-				if(filename != null)
-				{					
-					ftps.download(t5595.getT559503(), ConfigManager.ROOT_DIR+filename); // download to
+				if(filename != null) {					
+					ftps.download(rootDir + t5595.getT559503(), ConfigManager.ROOT_DIR+filename); // download to
 				}
 				
 			}

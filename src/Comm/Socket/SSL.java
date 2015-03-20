@@ -1,21 +1,13 @@
 package Comm.Socket;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.UnknownHostException;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Arrays;
 
 import javax.net.SocketFactory;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
@@ -41,7 +33,6 @@ public class SSL {
 	private String mUrl = null;
 	private int mPort = 0; 
 	
-	private String mReq = "";
     //private ICMASResponse mClient;
     
     private byte[] mBuffer = new byte[scBufferLen];

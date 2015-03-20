@@ -106,13 +106,13 @@ public class CMAS {
 		}
   public void SSLSend_Receive() throws FileNotFoundException, IOException
   {
-	  SSLClient ssl=new SSLClient();
+	  //SSLClient ssl=new SSLClient();
 	  Properties properties = new Properties();
 	  //properties.load(new FileInputStream(this.getClass().getResource("/").getPath() + Config.PATH.EasycardAPI_Properties));
       String serverIP =properties.getProperty("ServerIP");
       String serverPort =properties.getProperty("ServerPort");
 	  
-      ssl.SendReceive(mReqData.GetReqData(),serverIP,serverPort);
+      //ssl.SendReceive(mReqData.GetReqData(),serverIP,serverPort);
   }
 public void Build_CMASRequest()
 	{

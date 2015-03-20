@@ -14,16 +14,15 @@ import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+
 
 import org.apache.log4j.Logger;
 
 import Comm.Socket.MyX509TrustManager;
-import Process.ConfigManager;
+
 
 
 
@@ -113,6 +112,31 @@ public class Ftp4j {
 		} catch (FTPException e) {
 			// TODO Auto-generated catch block
 			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	
+	public String getCurrentDIR()
+	{
+		String result = null;
+		try {
+			if(client != null)
+				result = client.currentDirectory();
+			
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FTPIllegalReplyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FTPException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -1,4 +1,4 @@
-package Process;
+package CMAS;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -10,12 +10,12 @@ import CMAS.CmasDataSpec;
 import CMAS.CmasDataSpec.SubTag5596;
 import CMAS.CmasFTPList;
 import CMAS.CmasKernel;
-import Comm.FTP.Ftp4j;
 import Comm.Socket.*;
 import ErrorMessage.ApiRespCode;
 import ErrorMessage.CmasRespCode;
 import ErrorMessage.IRespCode;
 
+import CMAS.ConfigManager;
 import Reader.EZReader;
 import Reader.PPR_Reset;
 import Reader.ApduRecvSender;
