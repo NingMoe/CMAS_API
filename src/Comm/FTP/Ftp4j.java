@@ -152,7 +152,7 @@ public class Ftp4j {
 				logger.error("ftpClient object was NULL");
 				return false;
 			}		
-			logger.debug("CurreDIR:"+client.currentDirectory());
+			//logger.debug("CurreDIR:"+client.currentDirectory());
 			
 			logger.info("ftp download Remote:"+serverPath + " to local:"+ localPath);
 			client.download(serverPath, new java.io.File(localPath), ftpListener);

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Sealed: true
+Main-Class: EasycardAPI
+Class-Path: lib/log4j-1.2.17.jar lib/jssc.jar lib/ftp4j-1.7.2.jar

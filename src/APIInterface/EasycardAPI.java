@@ -1,10 +1,6 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+package APIInterface;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import CMAS.Process;
 import ErrorMessage.IRespCode;
 
@@ -23,7 +19,16 @@ public class EasycardAPI {
 		apiInit();
 		logger.info("End");
 	}
-	
+
+	public static void main(String args[]) {	
+	     
+		logger.info("********** App Start **********");	
+		apiInit();
+	    cmasSignOn(); 
+	    logger.info("End");
+	}
+
+
 	private static boolean apiInit(){
 		
 		try{
@@ -83,17 +88,4 @@ public class EasycardAPI {
 			logger.error(e.getMessage());
 		}
 	}
-
-	public  static void main(String args[]) {	
-	     
-		logger.info("********** App Start **********");
-			
-		
-		
-		apiInit();
-	    cmasSignOn();
-  
-	     logger.info("End");
-	}
-	
 }
