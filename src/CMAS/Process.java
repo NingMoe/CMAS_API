@@ -111,9 +111,10 @@ public class Process {
 					null);
 			
 			//preConnect
-			ssl.setPriority(Thread.MAX_PRIORITY);
-			ssl.start();
-			
+			//ssl.setPriority(Thread.MAX_PRIORITY);
+			//ssl.start();
+			if(ssl.connect()) logger.debug("SSL OK");
+			else logger.debug("SSL FAIL");
 			
 			while(t3900.equalsIgnoreCase("19") || (recvCnt < totalCnt))
 			{
@@ -147,6 +148,7 @@ public class Process {
 				kernel.readerField2CmasSpec(pprReset, specResetReq, cfgList, t5596);
 				cmasRquest = kernel.packRequeset(signOn0800,specResetReq);
 				
+				/*
 				//waitting connecting finish first
 				ssl.join();	
 				if(!ssl.isSocketOK())
@@ -159,7 +161,7 @@ public class Process {
 				else
 					logger.debug("SSL no alive");
 				
-
+*/
 				
 				if((cmasResponse = ssl.sendRequest(cmasRquest))!=null){
 					//got response
@@ -196,7 +198,19 @@ public class Process {
 				}
 			}//while
 			
+			//logger.debug("send SignOn again");
+			//cmasResponse = ssl.sendRequest(cmasRquest);
+			//logger.debug("send SignOn again OK");
+			
 			if(t3900.equalsIgnoreCase("00")){
+				
+				//SignOn Advice			
+				CmasDataSpec specSignonAdv = new CmasDataSpec();
+				kernel.readerField2CmasSpec(pprSignon, specSignonAdv, specResetResp, cfgList);
+				String cmasAdv = kernel.packRequeset(signOn0820, specSignonAdv);
+				logger.debug("SignOn Adv:"+cmasAdv);
+				cmasResponse = ssl.sendRequest(cmasAdv);
+				logger.debug("SignOn Adv Response:"+cmasResponse);
 				
 				//FTP download Start
 				cmasFTP = new CmasFTPList(hostInfo.getProperty("FtpUrl"), 
@@ -208,13 +222,7 @@ public class Process {
 				cmasFTP.start();					
 				
 				
-				//SignOn Advice			
-				CmasDataSpec specSignonAdv = new CmasDataSpec();
-				kernel.readerField2CmasSpec(pprSignon, specSignonAdv, specResetResp, cfgList);
-				String cmasAdv = kernel.packRequeset(signOn0820, specSignonAdv);
-				logger.debug("SignOn Adv:"+cmasAdv);
-				cmasResponse = ssl.sendRequest(cmasAdv);
-				logger.debug("SignOn Adv Response:"+cmasResponse);
+				
 			
 				cmasFTP.join();
 						
@@ -227,6 +235,7 @@ public class Process {
 		
 		finally{			
 			try{
+				logger.debug("finally");
 				ssl.disconnect();
 				cmasFTP.disconnect();
 				cfgManager.saveConfig();

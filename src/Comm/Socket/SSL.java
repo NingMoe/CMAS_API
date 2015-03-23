@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 import javax.net.SocketFactory;
@@ -33,6 +34,11 @@ public class SSL extends Thread {
 	private String mUrl = null;
 	private int mPort = 0; 
 	private boolean isSocketOK = false;
+	private int sendTO = 30;//30 sec
+	private int recvTo = 30;//30 sec
+	
+	private OutputStream out = null;
+	private InputStream in = null;
 	
     //private ICMASResponse mClient;
     
@@ -120,8 +126,13 @@ public class SSL extends Thread {
 			};
 			context = SSLContext.getInstance("SSL");
 			context.init(null, trustManager, null);
+			//context.init(null, trustManager, new SecureRandom());
+			
 			SocketFactory sf = context.getSocketFactory();
+			
+			
 			sslSocket = (SSLSocket) sf.createSocket(mUrl, mPort);
+			
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -138,6 +149,19 @@ public class SSL extends Thread {
 		if(sslSocket==null) 
 			return false;
 		
+		
+		try {
+			out = sslSocket.getOutputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			in = sslSocket.getInputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		logger.info("sslSocket OK");
 		logger.info("end");
 		return true;
@@ -156,21 +180,28 @@ public class SSL extends Thread {
 				return null;
 				//throw new IOException("SSL Socket NoConnection");
 			}
-			/*
-			if (mReq == null) {
-				logger.error("SSL send data was NULL");
-				throw new IOException("SSL send data was NULL");
-				//throw new IOException(ICMASResponse.scErr_InvalidParam);
-			}*/
-			OutputStream out;
-			out = sslSocket.getOutputStream();
 			
-	   	 	InputStream in;
-	   	 	in = sslSocket.getInputStream();
+			logger.debug("isBound:"+sslSocket.isBound());
+			logger.debug("isClosed:"+sslSocket.isClosed());
+			logger.debug("isConnected:"+sslSocket.isConnected());
+			logger.debug("isInputShutdown:"+sslSocket.isInputShutdown());
+			logger.debug("isOutputShutdown:"+sslSocket.isOutputShutdown());
+			
+			
+			logger.debug("setting Timeout:"+recvTo + "(sec)");
+			sslSocket.setSoTimeout(this.recvTo*1000);
+			
+			
+			//OutputStream out;
+			//out = sslSocket.getOutputStream();
+			
+	   	 	//InputStream in;
+	   	 	//in = sslSocket.getInputStream();
 			
 	   	 	
 	   	 	out.write(req.getBytes("UTF-8"));
 	   	 	out.flush();
+	   	 	logger.info("SSL Send OK!! waittin...recv response");
 	
 	   	 	String resp = null;
 	   	 	int len = in.read(mBuffer);
@@ -178,11 +209,16 @@ public class SSL extends Thread {
 	   	 		resp = new String(Arrays.copyOf(mBuffer, len), "UTF-8");
 	   	 	}
 	
+	   	 	
 	   	 	//out.close(); //!!Note: close() means closeSocket
 	   	 	//in.close(); //!!Note: close() means closeSocket
 	   	 		   	 
 	   	 	return resp;
 		} catch(IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return null;
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			return null;

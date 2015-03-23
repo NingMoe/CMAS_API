@@ -127,6 +127,7 @@ public class ConfigManager {
 	
 	public void saveConfig(){
 		
+		logger.info("Start");
 		Properties p = cfgList.get(ConfigOrder.TXN_INFO.ordinal());
 		//save TxnInfo pro.
 		try{
@@ -148,6 +149,8 @@ public class ConfigManager {
 		{
 			logger.error(ioe.getMessage());
 		}		
+		logger.info("end");
 	}
+	
 	
 }

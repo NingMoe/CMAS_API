@@ -1,6 +1,3 @@
 eclipse.preferences.version=1
-encoding//src/CMAS/CMAS.java=UTF-8
-encoding//src/CMAS/CMASTMS.java=UTF-8
 encoding//src/Reader/APDU.java=MS950
-encoding//src/TransData/TransactionData.java=UTF-8
 encoding//src/Utilities/PropertiesToMapUtil.java=UTF-8
