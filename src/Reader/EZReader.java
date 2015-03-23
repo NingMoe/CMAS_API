@@ -58,7 +58,7 @@ public class EZReader{
     			result = ApiRespCode.fromCode(hexCode, ReaderRespCode.values());
     		}    		
     		else
-    			result = ApiRespCode.SUCCESS;
+    			result = ReaderRespCode._9000;
     		
     		//for debug
     		command.debugResponseData();
@@ -67,7 +67,7 @@ public class EZReader{
     	catch(Exception e)
     	{
     		logger.error("Exception: "+ e.getMessage());
-    		return ApiRespCode.ERROR;
+    		return ReaderRespCode.EXCEPTION_ERROR;
     	}
     	
 		return result;

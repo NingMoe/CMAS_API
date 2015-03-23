@@ -14,6 +14,7 @@ import Comm.Socket.*;
 import ErrorMessage.ApiRespCode;
 import ErrorMessage.CmasRespCode;
 import ErrorMessage.IRespCode;
+import ErrorMessage.ReaderRespCode;
 
 import CMAS.ConfigManager;
 import Reader.EZReader;
@@ -52,13 +53,14 @@ public class Process {
 		reader = new EZReader(rs);
 	 }
 
-	private void initConfig() //throws FileNotFoundException, IOException
-	{
+	
+	 private void initConfig() //throws FileNotFoundException, IOException	
+	 {
 		logger.info("Start");
 		cfgManager = new ConfigManager();
 		cfgList = cfgManager.prepareConfig();
-		 logger.info("End");
-	}
+		 logger.info("End");	
+	 }
 	
 	/**
 	 * @return the mTimeZone
@@ -96,12 +98,23 @@ public class Process {
 		CmasDataSpec specResetResp = null;
 		CmasKernel kernel = null;
 		SSL ssl = null;
+		CmasFTPList cmasFTP = null;
 		String t3900 = "19";
 		try{
 			//資料傳送控制
 			SubTag5596 t5596 = new CmasDataSpec().new SubTag5596();
 			int recvCnt = 0;
 			int totalCnt = 0;
+			ssl = new SSL(hostInfo.getProperty("HostUrl"), 
+					Integer.valueOf(hostInfo.getProperty("HostPort")), 
+					null,
+					null);
+			
+			//preConnect
+			ssl.setPriority(Thread.MAX_PRIORITY);
+			ssl.start();
+			
+			
 			while(t3900.equalsIgnoreCase("19") || (recvCnt < totalCnt))
 			{
 			
@@ -122,7 +135,7 @@ public class Process {
 				
 				logger.debug("ready to call reader");
 				result = reader.exeCommand(pprReset);
-				if(result != ApiRespCode.SUCCESS)
+				if(result != ReaderRespCode._9000)
 				{
 					logger.error("exe PPR_Reset error:"+String.format("%s", result.getId()));
 					return result;
@@ -134,19 +147,19 @@ public class Process {
 				kernel.readerField2CmasSpec(pprReset, specResetReq, cfgList, t5596);
 				cmasRquest = kernel.packRequeset(signOn0800,specResetReq);
 				
-				//SSL-sendRecv
-				logger.debug(hostInfo.getProperty("HostUrl"));
-				ssl = new SSL(hostInfo.getProperty("HostUrl"), 
-						Integer.valueOf(hostInfo.getProperty("HostPort")), 
-						null,
-						null);
-				if(!ssl.connect()){
+				//waitting connecting finish first
+				ssl.join();	
+				if(!ssl.isSocketOK())
+				{
 					logger.error("ssl connect fail");
 					return ApiRespCode.SSL_CONNECT_FAIL;
-				}
-				else 
-					logger.info("ssl OK");
+				} else logger.info("ssl OK");
+				if(ssl.isAlive())
+					logger.debug("SSL alive");
+				else
+					logger.debug("SSL no alive");
 				
+
 				
 				if((cmasResponse = ssl.sendRequest(cmasRquest))!=null){
 					//got response
@@ -158,8 +171,7 @@ public class Process {
 						logger.info("TM Serial Number:"+specResetReq.getT1100()+", needed to change:"+specResetResp.getT1100());
 						//update SerialNumber
 						txnInfo.setProperty("TM_Serial_Number", specResetResp.getT1100());
-					}
-					else if(t3900.equalsIgnoreCase("00")){
+					} else if(t3900.equalsIgnoreCase("00")){
 						pprSignon= new PPR_SignOn();
 						kernel.cmasSpec2ReaderField(specResetResp, pprSignon, cfgList);
 						totalCnt = Integer.valueOf(specResetResp.getT5596().getT559601());
@@ -174,19 +186,28 @@ public class Process {
 						//SerialNumber
 						txnInfo.setProperty("TM_Serial_Number", specResetResp.getT1100());
 						logger.debug("After SerialNumber ++:"+txnInfo.getProperty("TM_Serial_Number"));							
-					}
-					else {
+					} else {
 						logger.error("CMAS Reject Code:"+t3900);
 						return ApiRespCode.fromCode(t3900, CmasRespCode.values());					
 					}				
-				}
-				else{/*maybe TimeOut*/
+				} else{/*maybe TimeOut*/
 					logger.error("CMAS maybe be timeout, nothing received");
 					return ApiRespCode.HOST_NO_RESPONSE;
 				}
 			}//while
 			
 			if(t3900.equalsIgnoreCase("00")){
+				
+				//FTP download Start
+				cmasFTP = new CmasFTPList(hostInfo.getProperty("FtpUrl"), 
+						hostInfo.getProperty("FtpIP"),
+						990,
+						hostInfo.getProperty("FtpLoginId"),
+						hostInfo.getProperty("FtpLoinPwd"),
+						specResetResp.getT5595s());
+				cmasFTP.start();					
+				
+				
 				//SignOn Advice			
 				CmasDataSpec specSignonAdv = new CmasDataSpec();
 				kernel.readerField2CmasSpec(pprSignon, specSignonAdv, specResetResp, cfgList);
@@ -195,22 +216,19 @@ public class Process {
 				cmasResponse = ssl.sendRequest(cmasAdv);
 				logger.debug("SignOn Adv Response:"+cmasResponse);
 			
-				//FTP download Start
-				CmasFTPList cmasFTP = new CmasFTPList(specResetResp.getT5595s());
-				cmasFTP.startDownload(hostInfo.getProperty("FtpIP"), 
-						990,
-						hostInfo.getProperty("FtpLoginId"),
-						hostInfo.getProperty("FtpLoinPwd"));
-			
+				cmasFTP.join();
+						
 			}
 		} catch(Exception e) {			
 			logger.error("Exception:"+e.getMessage());
+			result = ApiRespCode.ERROR;
 			e.printStackTrace();
 		}
 		
 		finally{			
 			try{
 				ssl.disconnect();
+				cmasFTP.disconnect();
 				cfgManager.saveConfig();
 			} catch(Exception e) {
 				logger.error(e.getMessage());

@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 import Comm.Socket.MyX509TrustManager;
 
 
-//public class SSL extends Thread {
-public class SSL {
+public class SSL extends Thread {
+//public class SSL {
 	
 	static Logger logger = Logger.getLogger(SSL.class);
 	
@@ -32,6 +32,7 @@ public class SSL {
 	private SSLSocket sslSocket = null;
 	private String mUrl = null;
 	private int mPort = 0; 
+	private boolean isSocketOK = false;
 	
     //private ICMASResponse mClient;
     
@@ -46,6 +47,24 @@ public class SSL {
 	
 	
 	
+	/**
+	 * @return the isSocketOK
+	 */
+	public boolean isSocketOK() {
+		return isSocketOK;
+	}
+
+
+
+	/**
+	 * @param isSocketOK the isSocketOK to set
+	 */
+	public void setSocketOK(boolean isSocketOK) {
+		this.isSocketOK = isSocketOK;
+	}
+
+
+
 	//protected boolean disconnect() {
 	public boolean disconnect() {
 		
@@ -92,6 +111,7 @@ public class SSL {
 	
 	
 	public boolean connect() {
+		logger.info("Start");
 		TrustManager[] trustManager = null;
 		SSLContext context = null;
 		try {
@@ -118,6 +138,8 @@ public class SSL {
 		if(sslSocket==null) 
 			return false;
 		
+		logger.info("sslSocket OK");
+		logger.info("end");
 		return true;
 	}
 	
@@ -164,6 +186,32 @@ public class SSL {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	
+	public void run() {
+		int retry= 2;
+		int cnt=0;
+		
+		logger.debug("SSL Thread Start");
+		
+		synchronized (this) {
+			while (cnt < retry) {
+				
+				logger.debug("cnt:"+cnt+", retry:"+retry);
+				synchronized (this) {					
+					if (!connect()) {
+						cnt++;
+						continue;
+					}
+					break;
+				}
+			}
+			if(cnt == retry)
+				this.setSocketOK(false);
+			else
+				this.setSocketOK(true);
 		}
 	}
 	
