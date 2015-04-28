@@ -22,7 +22,7 @@ public class CmasKernel {
 
 	static Logger logger = Logger.getLogger(CmasKernel.class);
 
-	public void CmasKernel(){
+	public CmasKernel(){
 		logger.info("Start");
 		
 		logger.info("End");

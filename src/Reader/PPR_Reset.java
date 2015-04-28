@@ -16,7 +16,7 @@ public class PPR_Reset extends APDU {
 	static Logger logger = Logger.getLogger(PPR_Reset.class);
 	public static final String scDescription = "重置Reader, 將初始化參數傳給Reader, 並取得SAToken/S-TAC"; 
 	
-	private static PPR_Reset sThis = null;
+	//private static PPR_Reset sThis = null;
 	
 	private static final int scReqDataLength = 64;
 	private static final int scReqLength = scReqDataLength + scReqMinLength;

@@ -1,8 +1,11 @@
 package APIInterface;
-import java.util.Properties;
+
 import org.apache.log4j.Logger;
+
+
 import CMAS.Process;
 import ErrorMessage.IRespCode;
+
 
 
 
@@ -15,36 +18,25 @@ public class EasycardAPI {
 	
 	public EasycardAPI() //throws FileNotFoundException, IOException
 	{
-		logger.info("Start");
-		apiInit();
-		logger.info("End");
+		//logger.info("Start");
+		//apiInit();
+		//logger.info("End");
 	}
 
 	public static void main(String args[]) {	
-	     
-		logger.info("********** App Start **********");	
-		apiInit();
+		//apiInit();
+		//logger.info("********** App Start **********");	
+		
 	    cmasSignOn(); 
-	    logger.info("End");
+	    //logger.info("End");
 	}
 
-
+/*
 	private static boolean apiInit(){
 		
 		try{
-			//setting log config properties
-			Properties logp = new Properties();	
-			//logp.load(EasycardAPI.class.getResourceAsStream("../config/log4j.properties"));
-			logp.load(EasycardAPI.class.getClassLoader().getResourceAsStream("log4j.properties"));
-
-			
-			
-			//logp.load(new FileInputStream(EasycardAPI.class.getResource("/").getPath() +  "Config/log4.properties"));
-			//String path= this.getClass().getResource("/").getPath()+ Config.PATH.Config+ "log4j.properties";
-			
-			//logp.load(new FileInputStream(path));
-			//PropertyConfigurator.configure(logp);
-			
+						
+			//PropertyConfigurator.configure("lib//log4j.properties");
 			
 		}catch(Exception e){
 			
@@ -54,13 +46,13 @@ public class EasycardAPI {
 		
 		return true;
 	}
-	
+	*/
 
 	public static void cmasSignOn()
 	{	
 		try{
 		
-			logger.info("Start");
+			//logger.info("Start");
 			
 			IRespCode result;
 			Process process = new Process();

@@ -1,7 +1,7 @@
 package ErrorMessage;
 
-import java.util.HashMap;
-import java.util.Map;
+
+
 
 
 public enum ReaderRespCode implements IRespCode{
@@ -102,7 +102,7 @@ public enum ReaderRespCode implements IRespCode{
 	private final String msg;
 	private final int actionId;  
 	  
-	private static Map<String, ReaderRespCode> codeToEnumMap;
+	//private static Map<String, ReaderRespCode> codeToEnumMap;
 	ReaderRespCode(String id, String msg, int actionId)
 	{
 		this.id = id;
@@ -119,7 +119,7 @@ public enum ReaderRespCode implements IRespCode{
 	@Override
 	public String getMsg() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.msg;
 	}
 
 	@Override

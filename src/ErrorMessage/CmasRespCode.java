@@ -1,7 +1,5 @@
 package ErrorMessage;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public enum CmasRespCode implements IRespCode{
 	_00("00","00訊息處理成功",1),
@@ -57,7 +55,7 @@ public enum CmasRespCode implements IRespCode{
 	@Override
 	public String getMsg() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.msg;
 	}
 
 	@Override

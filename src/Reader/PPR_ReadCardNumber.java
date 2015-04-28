@@ -1,9 +1,9 @@
 package Reader;
 
-import javax.swing.text.Utilities;
+
 
 import org.apache.log4j.Logger;
-import Utilities.DataFormat;
+
 import Utilities.Util;
 
 public class PPR_ReadCardNumber extends APDU{
@@ -24,7 +24,7 @@ public class PPR_ReadCardNumber extends APDU{
 		
 		int scReqInfoLength = reqDataLength + scReqInfoMinLength;
 		
-		int scRespLength = respDataLength + scRespMinLength;
+		
 		
 		logger.info("Start");
 		Req_NAD = 0;

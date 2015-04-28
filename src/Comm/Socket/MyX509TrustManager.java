@@ -24,12 +24,12 @@ public class MyX509TrustManager implements X509TrustManager{
 	
 	static Logger logger = Logger.getLogger(MyX509TrustManager.class);
 	private String serverCAFileName = null;
-	private String clientCAFileName = null;
+	//private String clientCAFileName = null;
 	
 	public MyX509TrustManager(String serverCAName, String clientCAName)
 	{
 		serverCAFileName = serverCAName;
-		clientCAFileName = clientCAName;
+		//clientCAFileName = clientCAName;
 	}
 	
 	@Override
