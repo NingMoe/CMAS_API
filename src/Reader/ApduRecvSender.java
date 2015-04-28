@@ -38,38 +38,7 @@ public class ApduRecvSender implements IRecvSender{
 
 
 
-/*
-	private int init()
-	{
-	
-		logger.info("Start");
-		int result = RespCode.SUCCESS.getId();
-		try{
-			
-			Properties  apiConfig = new Properties();
-			apiConfig.load(ApduRecvSender.class.getClassLoader().getResourceAsStream("EasycardAPI.properties")); 
-			//apiConfig.load(new FileInputStream(this.getClass().getResource("/").getPath() +Config.PATH.EasycardAPI_Properties));							
-			if((portName = apiConfig.getProperty("ReaderPort"))==null)
-				result = RespCode.ERROR.getId();
-			portName=portName.toUpperCase();
-			logger.debug("Reader ComportName: " + portName);
-			logger.info("End");
-			
-		}
-		catch(IOException e)
-		{
-			result = RespCode.ERROR.getId();
-			logger.error("IOException: "+e.getMessage());
-		}
-		return result;
-	}
-	
-	*/
-	private static String[] sGetPortList() {
-		return SerialPortList.getPortNames();
-	}
-	
-	private boolean openPort(String portName) {
+private boolean openPort(String portName) {
 		
 		logger.info("Start, comportname:"+portName+this.portName);
 		String[] portNames = SerialPortList.getPortNames();

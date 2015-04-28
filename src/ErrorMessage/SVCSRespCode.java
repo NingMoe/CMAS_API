@@ -1,6 +1,6 @@
 package ErrorMessage;
 
-import java.util.Map;
+
 
 public enum SVCSRespCode implements IRespCode{
 
@@ -55,7 +55,7 @@ public enum SVCSRespCode implements IRespCode{
 	@Override
 	public String getMsg() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.msg;
 	}
 
 	@Override

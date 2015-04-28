@@ -1,6 +1,7 @@
 package CMAS;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,15 +16,16 @@ public class ConfigManager {
 	private ArrayList<Properties> cfgList = null;
 	
 	public static final String ROOT_DIR="config/";
-	public static final String EASYCARD_API_FILE = "EasycardAPI.properties"; 
-	public static final String TXN_INFO_FILE = "TxnInfo.properties";
-	public static final String HOST_DEVE_INFO_FILE = "HostDeve.properties";
-	public static final String HOST_TEST_INFO_FILE = "HostTest.properties";
-	public static final String HOST_PROD_INFO_FILE = "HostProduction.properties";
-	public static final String USER_DEFINITION_FILE = "UserDefinition.properties";
-	public static final String CARD_NUMBER_BLACKLIST = "CardNumber.black";
-	public static final String CA_CERT = "CA.cer";
-	public static final String API_JAR = "EasyCardApi.jar";
+	public static final String EASYCARD_API_FILE = ROOT_DIR + "EasycardAPI.properties"; 
+	public static final String TXN_INFO_FILE = ROOT_DIR + "TxnInfo.properties";
+	public static final String HOST_DEVE_INFO_FILE = ROOT_DIR + "HostDeve.properties";
+	public static final String HOST_TEST_INFO_FILE = ROOT_DIR + "HostTest.properties";
+	public static final String HOST_PROD_INFO_FILE = ROOT_DIR + "HostProduction.properties";
+	public static final String USER_DEFINITION_FILE = ROOT_DIR + "UserDefinition.properties";
+	public static final String CARD_NUMBER_BLACKLIST = ROOT_DIR + "CardNumber.black";
+	public static final String CA_CERT = ROOT_DIR + "CA.cer";
+	public static final String API_JAR = ROOT_DIR + "EasyCardApi.jar";
+	public static final String LOG4J_CONFIG_FILE = ROOT_DIR+"log4j.properties";
 	
 	public enum ConfigOrder
 	{
@@ -59,6 +61,7 @@ public class ConfigManager {
 				switch(c)
 				{
 					case EASYCARD_API:
+						//easyCardApip.load(ConfigManager.class.getResourceAsStream(ConfigManager.EASYCARD_API_FILE));
 						easyCardApip.load(ConfigManager.class.getClassLoader().getResourceAsStream(ConfigManager.EASYCARD_API_FILE));
 						cfgList.add(easyCardApip);
 						break;
@@ -83,8 +86,12 @@ public class ConfigManager {
 						cfgList.add(hostInfo);
 						break;	
 					
-					case USER_DEF:
+					case USER_DEF://because UserDefine file would not package in jar file
+						//userDef.load(ConfigManager.class.getClassLoader().getResourceAsStream(ConfigManager.USER_DEFINITION_FILE));
 						userDef.load(ConfigManager.class.getClassLoader().getResourceAsStream(ConfigManager.USER_DEFINITION_FILE));
+						//String filepath = System.getProperty("user.dir")+"\\"+ConfigManager.USER_DEFINITION_FILE;
+						//logger.debug("UserDefine file path:"+filepath);
+						//userDef.load(new FileInputStream(filepath));
 						cfgList.add(userDef);
 						break;
 					default:
@@ -131,7 +138,7 @@ public class ConfigManager {
 		Properties p = cfgList.get(ConfigOrder.TXN_INFO.ordinal());
 		//save TxnInfo pro.
 		try{
-			File f = new File(ConfigManager.ROOT_DIR+ConfigManager.TXN_INFO_FILE);
+			File f = new File(ConfigManager.TXN_INFO_FILE);
 			FileOutputStream os;			
 			os = new FileOutputStream(f);			 		
 			p.store(os, null);			

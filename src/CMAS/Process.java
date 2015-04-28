@@ -6,6 +6,8 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 
+import org.apache.log4j.PropertyConfigurator;
+
 import CMAS.CmasDataSpec;
 import CMAS.CmasDataSpec.SubTag5596;
 import CMAS.CmasFTPList;
@@ -15,7 +17,6 @@ import ErrorMessage.ApiRespCode;
 import ErrorMessage.CmasRespCode;
 import ErrorMessage.IRespCode;
 import ErrorMessage.ReaderRespCode;
-
 import CMAS.ConfigManager;
 import Reader.EZReader;
 import Reader.PPR_Reset;
@@ -32,11 +33,11 @@ public class Process {
 	 private String mTimeZone = "Asia/Taipei"; 
 	 private ConfigManager cfgManager = null;
 	 private ArrayList<Properties> cfgList = null;
-	//RS232控制權由EasyCard控制
+	//RS232 controller was EasyCard
 	 public Process()
-	 {		
-		 logger.info("Start");
+	 {				 
 		 initConfig();
+		 
 		 Properties userDef = cfgList.get(ConfigManager.ConfigOrder.USER_DEF.ordinal());
 		 
 		 ApduRecvSender rs = new ApduRecvSender();
@@ -46,7 +47,7 @@ public class Process {
 	 }
 	
 		
-	//RS232控制權由POS控制
+	//RS232 controller was POS
 	 public Process(ApduRecvSender rs)
 	 {	
 		 initConfig();
@@ -56,10 +57,16 @@ public class Process {
 	
 	 private void initConfig() //throws FileNotFoundException, IOException	
 	 {
-		logger.info("Start");
+		
+		//init log4j configFile
+		//PropertyConfigurator.configure(Process.class.getResourceAsStream("log4j.properties"));//for rootDir
+		 PropertyConfigurator.configure(Process.class.getClassLoader().getResourceAsStream(ConfigManager.LOG4J_CONFIG_FILE));
+		logger.info("=============== API Start ===============");
+		
+		//init api needed configFile
 		cfgManager = new ConfigManager();
-		cfgList = cfgManager.prepareConfig();
-		 logger.info("End");	
+		cfgList = cfgManager.prepareConfig();		
+		logger.info("End");	
 	 }
 	
 	/**
@@ -101,7 +108,7 @@ public class Process {
 		CmasFTPList cmasFTP = null;
 		String t3900 = "19";
 		try{
-			//資料傳送控制
+			
 			SubTag5596 t5596 = new CmasDataSpec().new SubTag5596();
 			int recvCnt = 0;
 			int totalCnt = 0;
@@ -112,10 +119,12 @@ public class Process {
 			
 			//preConnect
 			//ssl.setPriority(Thread.MAX_PRIORITY);
-			//ssl.start();
+			ssl.start();
+			
+			/*
 			if(ssl.connect()) logger.debug("SSL OK");
 			else logger.debug("SSL FAIL");
-			
+			*/
 			while(t3900.equalsIgnoreCase("19") || (recvCnt < totalCnt))
 			{
 			
@@ -148,7 +157,7 @@ public class Process {
 				kernel.readerField2CmasSpec(pprReset, specResetReq, cfgList, t5596);
 				cmasRquest = kernel.packRequeset(signOn0800,specResetReq);
 				
-				/*
+				
 				//waitting connecting finish first
 				ssl.join();	
 				if(!ssl.isSocketOK())
@@ -156,12 +165,11 @@ public class Process {
 					logger.error("ssl connect fail");
 					return ApiRespCode.SSL_CONNECT_FAIL;
 				} else logger.info("ssl OK");
-				if(ssl.isAlive())
-					logger.debug("SSL alive");
-				else
-					logger.debug("SSL no alive");
 				
-*/
+				if(ssl.isAlive()) logger.debug("SSL alive");
+				else logger.debug("SSL no alive");
+				
+
 				
 				if((cmasResponse = ssl.sendRequest(cmasRquest))!=null){
 					//got response
@@ -169,7 +177,7 @@ public class Process {
 						
 					specResetResp = new CmasDataSpec(cmasResponse);
 					t3900 = specResetResp.getT3900();
-					if(t3900.equalsIgnoreCase("19")) {//序號重複
+					if(t3900.equalsIgnoreCase("19")) {//txn serialNo. duplicate
 						logger.info("TM Serial Number:"+specResetReq.getT1100()+", needed to change:"+specResetResp.getT1100());
 						//update SerialNumber
 						txnInfo.setProperty("TM_Serial_Number", specResetResp.getT1100());

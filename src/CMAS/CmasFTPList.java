@@ -69,7 +69,7 @@ public class CmasFTPList extends Thread{
 				else if(t559501.equalsIgnoreCase("TM12"))
 					filename = ConfigManager.API_JAR;//api file
 				if(filename != null) {					
-					ftps.download(rootDir + t5595.getT559503(), ConfigManager.ROOT_DIR+filename); // download to
+					ftps.download(rootDir + t5595.getT559503(), filename); // download to
 				}
 				
 			}

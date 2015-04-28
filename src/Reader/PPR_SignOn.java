@@ -12,7 +12,7 @@ public class PPR_SignOn extends APDU {
 	static Logger logger = Logger.getLogger(PPR_SignOn.class);
 	public static final String scDescription = "將0810端末開機訊息透過Reader傳入SAM卡中做認證";
 	
-	private static PPR_SignOn sThis = null;
+	//private static PPR_SignOn sThis = null;
 	
 	private static final int scReqDataLength = 128;
 	private static final int scReqLength = scReqDataLength + scReqMinLength;
